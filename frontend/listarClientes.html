@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listar Clientes</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Clientes</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="cadastrarClientes.html">Cadastrar Cliente</a>
+        <a href="enderecosClientes.html">Endereços</a>
+        <a href="cartoesClientes.html">Cartões</a>
+        <a href="listarClientes.html" class="ativo">Listar Clientes</a>
+        <a href="listarEndereco.html">Listar Endereços</a>
+        <a href="listarCartoes.html">Listar Cartões</a>
+        <a href="alterarSenha.html">Alterar Senha</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Clientes Cadastrados</h2>
+
+      <input type="text" id="filtroNome" placeholder="Filtrar por nome" />
+      <input type="text" id="filtroEmail" placeholder="Filtrar por e-mail" />
+      <button onclick="filtrarClientes()">Filtrar</button>
+
+      <table id="tabelaClientes">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Ranking</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Clientes mockados aqui -->
+        </tbody>
+      </table>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

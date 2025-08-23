@@ -1,0 +1,202 @@
+/* ==============================
+   RESET BÁSICO
+   ============================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #12161f;
+  color: #e0e0e0;
+  line-height: 1.5;
+}
+
+/* ==============================
+   HEADER E NAV
+   ============================== */
+header {
+  background-color: #1a1f2b;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+header h1 {
+  margin-bottom: 10px;
+}
+
+nav a {
+  color: #e0e0e0;
+  text-decoration: none;
+  margin-right: 15px;
+  font-weight: bold;
+}
+
+nav a.ativo {
+  text-decoration: underline;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* ==============================
+   MAIN
+   ============================== */
+main {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 20px auto;
+  background-color: #1e2433;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #2196f3;
+}
+
+/* ==============================
+   FORMULÁRIOS
+   ============================== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+form label {
+  font-weight: bold;
+}
+
+form input,
+form select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background-color: #2a2f3d;
+  color: #e0e0e0;
+}
+
+form button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Botões por tipo */
+.btn-confirm {
+  background-color: #4caf50;
+  color: white;
+}
+.btn-confirm:hover {
+  background-color: #45a049;
+}
+
+.btn-cancel {
+  background-color: #f44336;
+  color: white;
+}
+.btn-cancel:hover {
+  background-color: #d32f2f;
+}
+
+.btn-neutral {
+  background-color: #2196f3;
+  color: white;
+}
+.btn-neutral:hover {
+  background-color: #0b7dda;
+}
+
+/* ==============================
+   TABELAS
+   ============================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  color: #e0e0e0;
+}
+
+table th,
+table td {
+  border: 1px solid #333;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background-color: #2a2f3d;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #232936;
+}
+
+table tr:hover {
+  background-color: #2e3548;
+}
+
+/* ==============================
+   FILTROS DE CLIENTES
+   ============================== */
+#filtroNome,
+#filtroEmail {
+  padding: 8px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background-color: #2a2f3d;
+  color: #e0e0e0;
+}
+
+/* ==============================
+   RESUMO DASHBOARD
+   ============================== */
+.resumo {
+  margin-top: 20px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.resumo p {
+  background-color: #2a2f3d;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  color: #e0e0e0;
+}
+
+/* ==============================
+   RESPONSIVO
+   ============================== */
+@media (max-width: 768px) {
+  header {
+    align-items: center;
+  }
+  nav a {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .resumo {
+    flex-direction: column;
+  }
+  table,
+  form {
+    font-size: 14px;
+  }
+}

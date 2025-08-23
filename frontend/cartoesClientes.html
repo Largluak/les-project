@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cartões de Clientes</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Clientes</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="cadastrarClientes.html">Cadastrar Cliente</a>
+        <a href="enderecosClientes.html">Endereços</a>
+        <a href="cartoesClientes.html" class="ativo">Cartões</a>
+        <a href="listarClientes.html">Listar Clientes</a>
+        <a href="listarEndereco.html">Listar Endereços</a>
+        <a href="listarCartoes.html">Listar Cartões</a>
+        <a href="alterarSenha.html">Alterar Senha</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Cartões de Crédito</h2>
+      <form id="formCartao">
+        <label for="numeroCartao">Nº do Cartão*</label>
+        <input type="text" id="numeroCartao" required />
+
+        <label for="nomeCartao">Nome impresso*</label>
+        <input type="text" id="nomeCartao" required />
+
+        <label for="bandeiraCartao">Bandeira*</label>
+        <select id="bandeiraCartao" required>
+          <option value="">Selecione</option>
+          <option>Visa</option>
+          <option>MasterCard</option>
+          <option>Amex</option>
+        </select>
+
+        <label for="codigoSeguranca">Código de Segurança*</label>
+        <input type="text" id="codigoSeguranca" required />
+
+        <label for="preferencial">Cartão preferencial</label>
+        <input type="checkbox" id="preferencial" />
+
+        <button type="submit">Adicionar Cartão</button>
+      </form>
+
+      <h3>Cartões cadastrados</h3>
+      <table id="tabelaCartoes">
+        <thead>
+          <tr>
+            <th>Nº Cartão</th>
+            <th>Nome</th>
+            <th>Bandeira</th>
+            <th>Código</th>
+            <th>Preferencial</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Cartões mockados aqui -->
+        </tbody>
+      </table>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
