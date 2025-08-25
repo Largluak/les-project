@@ -57,7 +57,7 @@ let clientes = JSON.parse(localStorage.getItem("clientes")) || [
         cidade: "Rio de Janeiro",
         estado: "RJ",
         pais: "Brasil",
-        observacoes: "",
+        observacoes: "Empresa X",
       },
     ],
     cartoes: [
@@ -91,7 +91,7 @@ let clientes = JSON.parse(localStorage.getItem("clientes")) || [
         cidade: "Belo Horizonte",
         estado: "MG",
         pais: "Brasil",
-        observacoes: "",
+        observacoes: "Casa amarela",
       },
     ],
     cartoes: [
@@ -125,7 +125,7 @@ let clientes = JSON.parse(localStorage.getItem("clientes")) || [
         cidade: "Curitiba",
         estado: "PR",
         pais: "Brasil",
-        observacoes: "",
+        observacoes: "Casa com jardim",
       },
     ],
     cartoes: [
@@ -159,7 +159,7 @@ let clientes = JSON.parse(localStorage.getItem("clientes")) || [
         cidade: "Porto Alegre",
         estado: "RS",
         pais: "Brasil",
-        observacoes: "",
+        observacoes: "Empresa Y",
       },
     ],
     cartoes: [
@@ -243,7 +243,13 @@ function listarClientes() {
   if (!tabela) return;
 
   tabela.innerHTML = "";
-  clientes.forEach((c, index) => {
+
+  // mapeia para manter o índice original e ordena pelo menor ranking
+  const ordenados = clientes
+    .map((c, idx) => ({ c, idx }))
+    .sort((a, b) => a.c.ranking - b.c.ranking);
+
+  ordenados.forEach(({ c, idx }) => {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${c.nome}</td>
@@ -252,17 +258,50 @@ function listarClientes() {
       <td>${c.ranking}</td>
       <td>${c.status}</td>
       <td>
-        <button class="btn-neutral" onclick="editarCliente(${index})">Editar</button>
+        <button class="btn-neutral" onclick="editarCliente(${idx})">Editar</button>
         <button class="${
           c.status === "Ativo" ? "btn-cancel" : "btn-confirm"
-        }" onclick="inativarCliente(${index})">${
-      c.status === "Ativo" ? "Inativar" : "Ativar"
-    }</button>
+        }" onclick="inativarCliente(${idx})">
+          ${c.status === "Ativo" ? "Inativar" : "Ativar"}
+        </button>
       </td>
     `;
     tabela.appendChild(row);
   });
 }
+
+//uso também para abrir modal de edição do cartão
+let indiceClienteAtual = null;
+
+function editarCliente(i) {
+  indiceClienteAtual = i;
+  const c = clientes[i];
+  document.getElementById("editNome").value = c.nome;
+  document.getElementById("editEmail").value = c.email;
+  document.getElementById("editTelefone").value = c.telefone;
+  document.getElementById("editRanking").value = c.ranking;
+  document.getElementById("editStatus").value = c.status;
+  document.getElementById("modalCliente").style.display = "block";
+}
+
+function fecharModalCliente() {
+  document.getElementById("modalCliente").style.display = "none";
+}
+
+document
+  .getElementById("formEditarCliente")
+  ?.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const c = clientes[indiceClienteAtual];
+    c.nome = document.getElementById("editNome").value;
+    c.email = document.getElementById("editEmail").value;
+    c.telefone = document.getElementById("editTelefone").value;
+    c.ranking = document.getElementById("editRanking").value;
+    c.status = document.getElementById("editStatus").value;
+    salvarClientes();
+    carregarClientes();
+    fecharModalCliente();
+  });
 
 /**********************************
  * FILTRAGEM DE CLIENTES
@@ -288,8 +327,8 @@ function filtrarClientes() {
         <td>${c.ranking}</td>
         <td>${c.status}</td>
         <td>
-          <button onclick="editarCliente(${index})">Editar</button>
-          <button onclick="inativarCliente(${index})">${
+          <button class="btn-neutral" onclick="editarCliente(${index})">Editar</button>
+          <button class="btn-cancel" onclick="inativarCliente(${index})">${
         c.status === "Ativo" ? "Inativar" : "Ativar"
       }</button>
         </td>
@@ -297,13 +336,6 @@ function filtrarClientes() {
       tabela.appendChild(row);
     }
   });
-}
-
-/**********************************
- * EDITAR / INATIVAR CLIENTE
- **********************************/
-function editarCliente(index) {
-  alert("Função de editar cliente ainda será implementada para mock.");
 }
 
 function inativarCliente(index) {
@@ -355,26 +387,86 @@ function listarEnderecos() {
   if (!tabela) return;
 
   tabela.innerHTML = "";
-  clientes[0].enderecos.forEach((e, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${e.tipo}</td>
-      <td>${e.logradouro}</td>
-      <td>${e.numero}</td>
-      <td>${e.bairro}</td>
-      <td>${e.cidade}</td>
-      <td>${e.cep}</td>
-      <td>${e.estado}</td>
-      <td>${e.pais}</td>
-      <td>${e.observacoes}</td>
-      <td><button class='btn-cancel' onclick="removerEndereco(${index})">Remover</button></td>
-    `;
-    tabela.appendChild(row);
+  clientes.forEach((cliente, iCLiente) => {
+    cliente.enderecos.forEach((e, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${cliente.nome}</td>
+        <td>${e.tipo}</td>
+        <td>${e.logradouro}</td>
+        <td>${e.numero}</td>
+        <td>${e.bairro}</td>
+        <td>${e.cidade}</td>
+        <td>${e.cep}</td>
+        <td>${e.estado}</td>
+        <td>${e.pais}</td>
+        <td>${e.observacoes}</td>
+        <td>
+          <button class='btn-neutral' onclick="editarEndereco(${iCLiente}, ${index})">Editar</button>
+          <button class='btn-cancel' onclick="removerEndereco(${iCLiente}, ${index})">Remover</button>
+        </td>
+      `;
+      tabela.appendChild(row);
+    });
   });
 }
 
-function removerEndereco(index) {
-  clientes[0].enderecos.splice(index, 1);
+// Abrir modal com dados do endereço
+function editarEndereco(iCliente, index) {
+  const endereco = clientes[iCliente].enderecos[index];
+
+  document.getElementById("clienteIndex").value = iCliente;
+  document.getElementById("enderecoIndex").value = index;
+
+  document.getElementById("editTipo").value = endereco.tipo;
+  document.getElementById("editLogradouro").value = endereco.logradouro;
+  document.getElementById("editNumero").value = endereco.numero;
+  document.getElementById("editBairro").value = endereco.bairro;
+  document.getElementById("editCidade").value = endereco.cidade;
+  document.getElementById("editCep").value = endereco.cep;
+  document.getElementById("editEstado").value = endereco.estado;
+  document.getElementById("editPais").value = endereco.pais;
+  document.getElementById("editObservacoes").value = endereco.observacoes || "";
+
+  document.getElementById("modalEditarEndereco").style.display = "block";
+}
+
+// Fechar modal
+function fecharModal() {
+  document.getElementById("modalEditarEndereco").style.display = "none";
+}
+
+// Salvar edição
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("formEditarEndereco");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const iCliente = document.getElementById("clienteIndex").value;
+      const index = document.getElementById("enderecoIndex").value;
+
+      clientes[iCliente].enderecos[index] = {
+        tipo: document.getElementById("editTipo").value,
+        logradouro: document.getElementById("editLogradouro").value,
+        numero: document.getElementById("editNumero").value,
+        bairro: document.getElementById("editBairro").value,
+        cidade: document.getElementById("editCidade").value,
+        cep: document.getElementById("editCep").value,
+        estado: document.getElementById("editEstado").value,
+        pais: document.getElementById("editPais").value,
+        observacoes: document.getElementById("editObservacoes").value,
+      };
+
+      salvarClientes();
+      listarEnderecos();
+      fecharModal();
+    });
+  }
+});
+
+function removerEndereco(iCliente, index) {
+  clientes[iCliente].enderecos.splice(index, 1);
   salvarClientes();
   listarEnderecos();
 }
@@ -410,22 +502,63 @@ function listarCartoes() {
   if (!tabela) return;
 
   tabela.innerHTML = "";
-  clientes[0].cartoes.forEach((c, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${c.numero}</td>
-      <td>${c.nome}</td>
-      <td>${c.bandeira}</td>
-      <td>${c.codigo}</td>
-      <td>${c.preferencial ? "Sim" : "Não"}</td>
-      <td><button class='btn-cancel' onclick="removerCartao(${index})">Remover</button></td>
-    `;
-    tabela.appendChild(row);
+  clientes.forEach((cliente, iCliente) => {
+    cliente.cartoes.forEach((c, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${cliente.nome}</td>
+        <td>${c.numero}</td>
+        <td>${c.nome}</td>
+        <td>${c.bandeira}</td>
+        <td>${c.codigo}</td>
+        <td>${c.preferencial ? "Sim" : "Não"}</td>
+        <td>
+          <button class='btn-neutral' onclick="editarCartao(${iCliente}, ${index})">Editar</button>
+          <button class='btn-cancel' onclick="removerCartao(${iCliente}, ${index})">Remover</button>
+        </td>
+      `;
+      tabela.appendChild(row);
+    });
   });
 }
 
-function removerCartao(index) {
-  clientes[0].cartoes.splice(index, 1);
+let indiceCartaoAtual = null;
+
+function editarCartao(i, j) {
+  indiceClienteAtual = i;
+  indiceCartaoAtual = j;
+  const cartao = clientes[i].cartoes[j];
+  document.getElementById("editNumeroCartao").value = cartao.numero;
+  document.getElementById("editNomeCartao").value = cartao.nome;
+  document.getElementById("editBandeiraCartao").value = cartao.bandeira;
+  document.getElementById("editCodigoCartao").value = cartao.codigo;
+  document.getElementById("editPreferencialCartao").value = cartao.preferencial;
+  document.getElementById("modalCartao").style.display = "block";
+}
+
+function fecharModalCartao() {
+  document.getElementById("modalCartao").style.display = "none";
+}
+
+document
+  .getElementById("formEditarCartao")
+  ?.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const cliente = clientes[indiceClienteAtual];
+    const cartao = cliente.cartoes[indiceCartaoAtual];
+    cartao.numero = document.getElementById("editNumeroCartao").value;
+    cartao.nome = document.getElementById("editNomeCartao").value;
+    cartao.bandeira = document.getElementById("editBandeiraCartao").value;
+    cartao.codigo = document.getElementById("editCodigoCartao").value;
+    cartao.preferencial =
+      document.getElementById("editPreferencialCartao").value === "true";
+    salvarClientes();
+    carregarCartoes();
+    fecharModalCartao();
+  });
+
+function removerCartao(iCliente, index) {
+  clientes[iCliente].cartoes.splice(index, 1);
   salvarClientes();
   listarCartoes();
 }
@@ -467,7 +600,7 @@ function atualizarResumo() {
   const total = clientes.length;
   const inativos = clientes.filter((c) => c.status === "Inativo").length;
   const melhor = clientes.reduce(
-    (a, b) => (a.ranking > b.ranking ? a : b),
+    (a, b) => (a.ranking < b.ranking ? a : b),
     clientes[0]
   ).nome;
 

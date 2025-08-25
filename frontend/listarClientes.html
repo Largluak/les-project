@@ -26,7 +26,7 @@
 
       <input type="text" id="filtroNome" placeholder="Filtrar por nome" />
       <input type="text" id="filtroEmail" placeholder="Filtrar por e-mail" />
-      <button onclick="filtrarClientes()">Filtrar</button>
+      <button class="btn-neutral" onclick="filtrarClientes()">Filtrar</button>
 
       <table id="tabelaClientes">
         <thead>
@@ -44,6 +44,35 @@
         </tbody>
       </table>
     </main>
+
+    <!-- Modal de edição de Cliente -->
+    <div id="modalCliente" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModalCliente()">&times;</span>
+        <h2>Editar Cliente</h2>
+        <form id="formEditarCliente">
+          <label>Nome:</label>
+          <input type="text" id="editNome" required />
+
+          <label>Email:</label>
+          <input type="email" id="editEmail" required />
+
+          <label>Telefone:</label>
+          <input type="text" id="editTelefone" required />
+
+          <label>Ranking:</label>
+          <input type="number" id="editRanking" min="1" max="5" required />
+
+          <label>Status:</label>
+          <select id="editStatus">
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+          </select>
+
+          <button type="submit" class="btn-confirm">Salvar Alterações</button>
+        </form>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>

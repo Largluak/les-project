@@ -23,26 +23,70 @@
 
     <main>
       <h3>Endereços cadastrados</h3>
-      <table id="tabelaEnderecos">
-        <thead>
-          <tr>
-            <th>Tipo</th>
-            <th>Logradouro</th>
-            <th>Número</th>
-            <th>Bairro</th>
-            <th>Cidade</th>
-            <th>CEP</th>
-            <th>Estado</th>
-            <th>País</th>
-            <th>Complemento</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Endereços mockados aqui -->
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table id="tabelaEnderecos">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Tipo</th>
+              <th>Logradouro</th>
+              <th>Número</th>
+              <th>Bairro</th>
+              <th>Cidade</th>
+              <th>CEP</th>
+              <th>Estado</th>
+              <th>País</th>
+              <th>Complemento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Endereços mockados aqui -->
+          </tbody>
+        </table>
+      </div>
     </main>
+
+    <!-- MODAL -->
+    <div id="modalEditarEndereco" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModal()">&times;</span>
+        <h3>Editar Endereço</h3>
+        <form id="formEditarEndereco">
+          <input type="hidden" id="clienteIndex" />
+          <input type="hidden" id="enderecoIndex" />
+
+          <label>Tipo:</label>
+          <input type="text" id="editTipo" required />
+
+          <label>Logradouro:</label>
+          <input type="text" id="editLogradouro" required />
+
+          <label>Número:</label>
+          <input type="text" id="editNumero" required />
+
+          <label>Bairro:</label>
+          <input type="text" id="editBairro" required />
+
+          <label>Cidade:</label>
+          <input type="text" id="editCidade" required />
+
+          <label>CEP:</label>
+          <input type="text" id="editCep" required />
+
+          <label>Estado:</label>
+          <input type="text" id="editEstado" required />
+
+          <label>País:</label>
+          <input type="text" id="editPais" required />
+
+          <label>Complemento:</label>
+          <input type="text" id="editObservacoes" />
+
+          <button type="submit" class="btn-confirm">Salvar</button>
+        </form>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>

@@ -26,6 +26,7 @@
       <table id="tabelaCartoes">
         <thead>
           <tr>
+            <th>Cliente</th>
             <th>Nº Cartão</th>
             <th>Nome</th>
             <th>Bandeira</th>
@@ -39,6 +40,35 @@
         </tbody>
       </table>
     </main>
+
+    <!-- Modal edição de cartão -->
+    <div id="modalCartao" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModalCartao()">&times;</span>
+        <h2>Editar Cartão</h2>
+        <form id="formEditarCartao">
+          <label>Número do Cartão:</label>
+          <input type="text" id="editNumeroCartao" required />
+
+          <label>Nome no Cartão:</label>
+          <input type="text" id="editNomeCartao" required />
+
+          <label>Bandeira:</label>
+          <input type="text" id="editBandeiraCartao" required />
+
+          <label>Código de Segurança:</label>
+          <input type="text" id="editCodigoCartao" required />
+
+          <label>Preferencial:</label>
+          <select id="editPreferencialCartao">
+            <option value="true">Sim</option>
+            <option value="false">Não</option>
+          </select>
+
+          <button type="submit" class="btn-confirm">Salvar Alterações</button>
+        </form>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>
