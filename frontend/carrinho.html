@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrinho - Sistema de Vendas</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Vendas Eletrônicas</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="carrinho.html" class="ativo"
+          >Carrinho (<span id="contador-carrinho">0</span>)</a
+        >
+        <a href="pedidos.html">Meus Pedidos</a>
+        <a href="admin.html">Administração</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Carrinho de Compras</h2>
+
+      <div id="carrinho-vazio" class="mensagem-vazia" style="display: none">
+        <p>Seu carrinho está vazio!</p>
+        <a href="produtos.html" class="btn btn-primary">Continuar Comprando</a>
+      </div>
+
+      <div id="carrinho-conteudo">
+        <div id="itens-carrinho">
+          <!-- Itens do carrinho serão carregados aqui -->
+        </div>
+
+        <div class="resumo-carrinho">
+          <h3>Resumo do Pedido</h3>
+          <div class="linha-resumo">
+            <span>Subtotal:</span>
+            <span id="subtotal">R$ 0,00</span>
+          </div>
+          <div class="linha-resumo">
+            <span>Frete:</span>
+            <span id="valor-frete">Calcular</span>
+          </div>
+          <div class="linha-resumo total">
+            <span>Total:</span>
+            <span id="total">R$ 0,00</span>
+          </div>
+
+          <button class="btn btn-secondary" onclick="calcularFrete()">
+            Calcular Frete
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="finalizarCompra()"
+            id="btn-finalizar"
+          >
+            Finalizar Compra
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal para cálculo de frete -->
+      <div id="modal-frete" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Calcular Frete</h3>
+          <form id="form-frete">
+            <label for="cep">CEP de Entrega:</label>
+            <input type="text" id="cep" required placeholder="00000-000" />
+            <button type="submit" class="btn btn-primary">Calcular</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal para finalizar compra -->
+      <div id="modal-checkout" class="modal">
+        <div class="modal-content modal-large">
+          <span class="close">&times;</span>
+          <h3>Finalizar Compra</h3>
+
+          <div class="checkout-steps">
+            <div class="step active" data-step="1">1. Entrega</div>
+            <div class="step" data-step="2">2. Pagamento</div>
+            <div class="step" data-step="3">3. Confirmação</div>
+          </div>
+
+          <form id="form-checkout">
+            <div id="step-entrega" class="checkout-step active">
+              <h4>Endereço de Entrega</h4>
+              <select id="endereco-selecionado">
+                <option value="">Selecionar endereço</option>
+                <option value="novo">Novo endereço</option>
+              </select>
+
+              <div id="novo-endereco" style="display: none">
+                <input type="text" placeholder="Rua" required />
+                <input type="text" placeholder="Número" required />
+                <input type="text" placeholder="Bairro" required />
+                <input type="text" placeholder="Cidade" required />
+                <input type="text" placeholder="CEP" required />
+                <label>
+                  <input type="checkbox" id="salvar-endereco" />
+                  Salvar este endereço no meu perfil
+                </label>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="proximaEtapa(2)"
+              >
+                Continuar
+              </button>
+            </div>
+
+            <div id="step-pagamento" class="checkout-step">
+              <h4>Forma de Pagamento</h4>
+
+              <div class="pagamento-opcoes">
+                <div class="opcao-pagamento">
+                  <input
+                    type="radio"
+                    id="cartao"
+                    name="pagamento"
+                    value="cartao"
+                  />
+                  <label for="cartao">Cartão de Crédito</label>
+                </div>
+                <div class="opcao-pagamento">
+                  <input
+                    type="radio"
+                    id="cupom"
+                    name="pagamento"
+                    value="cupom"
+                  />
+                  <label for="cupom">Cupom de Troca/Promocional</label>
+                </div>
+              </div>
+
+              <div id="cartao-dados" class="pagamento-detalhes">
+                <select id="cartao-selecionado">
+                  <option value="">Selecionar cartão</option>
+                  <option value="novo">Novo cartão</option>
+                </select>
+
+                <div id="novo-cartao" style="display: none">
+                  <input type="text" placeholder="Número do cartão" required />
+                  <input type="text" placeholder="Nome no cartão" required />
+                  <input type="text" placeholder="MM/AA" required />
+                  <input type="text" placeholder="CVV" required />
+                  <label>
+                    <input type="checkbox" id="salvar-cartao" />
+                    Salvar este cartão no meu perfil
+                  </label>
+                </div>
+              </div>
+
+              <div id="cupom-dados" class="pagamento-detalhes">
+                <select id="cupom-selecionado">
+                  <option value="">Selecionar cupom</option>
+                </select>
+                <input
+                  type="text"
+                  id="codigo-cupom"
+                  placeholder="Código do cupom"
+                />
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="validarCupom()"
+                >
+                  Validar
+                </button>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="etapaAnterior(1)"
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="proximaEtapa(3)"
+              >
+                Continuar
+              </button>
+            </div>
+
+            <div id="step-confirmacao" class="checkout-step">
+              <h4>Confirmação</h4>
+              <div id="resumo-final">
+                <!-- Resumo será preenchido dinamicamente -->
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="etapaAnterior(2)"
+              >
+                Voltar
+              </button>
+              <button type="submit" class="btn btn-success">
+                Confirmar Pedido
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        carregarCarrinho();
+        atualizarContadorCarrinho();
+        inicializarModals();
+      });
+    </script>
+  </body>
+</html>

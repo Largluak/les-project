@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consultar Livros - Sistema de Livros</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Livros</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="cadastrarLivro.html">Cadastrar Livro</a>
+        <a href="consultarLivros.html" class="ativo">Consultar Livros</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Consultar Livros</h2>
+
+      <!-- Filtros de Pesquisa -->
+      <div class="filtros-container">
+        <h3>Filtros de Pesquisa</h3>
+        <form id="formFiltros" class="filtros-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="filtroTitulo">Título</label>
+              <input
+                type="text"
+                id="filtroTitulo"
+                name="filtroTitulo"
+                placeholder="Buscar por título"
+              />
+            </div>
+            <div class="form-group">
+              <label for="filtroIsbn">ISBN</label>
+              <input
+                type="text"
+                id="filtroIsbn"
+                name="filtroIsbn"
+                placeholder="Buscar por ISBN"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="filtroAutor">Autor</label>
+              <select id="filtroAutor" name="filtroAutor">
+                <option value="">Todos os autores</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="filtroEditora">Editora</label>
+              <select id="filtroEditora" name="filtroEditora">
+                <option value="">Todas as editoras</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="filtroCategoria">Categoria</label>
+              <select id="filtroCategoria" name="filtroCategoria">
+                <option value="">Todas as categorias</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="filtroStatus">Status</label>
+              <select id="filtroStatus" name="filtroStatus">
+                <option value="">Todos</option>
+                <option value="ativo">Ativo</option>
+                <option value="inativo">Inativo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="filtroAnoInicio">Ano (de)</label>
+              <input
+                type="number"
+                id="filtroAnoInicio"
+                name="filtroAnoInicio"
+                min="1000"
+                max="2025"
+              />
+            </div>
+            <div class="form-group">
+              <label for="filtroAnoFim">Ano (até)</label>
+              <input
+                type="number"
+                id="filtroAnoFim"
+                name="filtroAnoFim"
+                min="1000"
+                max="2025"
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="limparFiltros()"
+            >
+              Limpar Filtros
+            </button>
+            <button type="submit" class="btn-primary">Buscar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Resultados -->
+      <div class="resultados-container">
+        <div class="resultados-header">
+          <h3>Resultados da Pesquisa</h3>
+          <div class="resultados-info">
+            <span id="totalResultados">0 livros encontrados</span>
+            <button class="btn-secondary" onclick="exportarResultados()">
+              Exportar
+            </button>
+          </div>
+        </div>
+
+        <div class="tabela-container">
+          <table id="tabelaLivros" class="tabela-livros">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>ISBN</th>
+                <th>Editora</th>
+                <th>Ano</th>
+                <th>Status</th>
+                <th>Estoque</th>
+                <th>Preço</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpoTabelaLivros">
+              <tr class="sem-resultados">
+                <td colspan="10">Use os filtros acima para buscar livros</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="paginacao" id="paginacao">
+          <!-- Paginação será inserida via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Modal de Detalhes do Livro -->
+      <div id="modalDetalhes" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Detalhes do Livro</h3>
+            <span class="close" onclick="fecharModal()">&times;</span>
+          </div>
+          <div class="modal-body" id="detalhesLivro">
+            <!-- Conteúdo será inserido via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de Edição -->
+      <div id="modalEdicao" class="modal">
+        <div class="modal-content modal-large">
+          <div class="modal-header">
+            <h3>Editar Livro</h3>
+            <span class="close" onclick="fecharModalEdicao()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <form id="formEdicaoLivro" class="form-livro">
+              <!-- Formulário de edição será inserido via JavaScript -->
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de Ativação/Inativação -->
+      <div id="modalStatus" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="tituloModalStatus">Alterar Status</h3>
+            <span class="close" onclick="fecharModalStatus()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <form id="formAlterarStatus">
+              <div class="form-group">
+                <label for="motivoStatus">Motivo *</label>
+                <select id="motivoStatus" name="motivoStatus" required>
+                  <option value="">Selecione um motivo</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="justificativaStatus">Justificativa *</label>
+                <textarea
+                  id="justificativaStatus"
+                  name="justificativaStatus"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  onclick="fecharModalStatus()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="btn-primary"
+                  id="btnConfirmarStatus"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        carregarFiltrosConsulta();
+        configurarEventosConsulta();
+        buscarLivros(); // Busca inicial
+      });
+    </script>
+  </body>
+</html>

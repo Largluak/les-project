@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meus Pedidos - Sistema de Vendas</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Vendas Eletrônicas</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="carrinho.html"
+          >Carrinho (<span id="contador-carrinho">0</span>)</a
+        >
+        <a href="pedidos.html" class="ativo">Meus Pedidos</a>
+        <a href="admin.html">Administração</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Meus Pedidos</h2>
+
+      <div class="filtros">
+        <select id="status-filtro">
+          <option value="">Todos os status</option>
+          <option value="EM_PROCESSAMENTO">Em Processamento</option>
+          <option value="APROVADA">Aprovada</option>
+          <option value="EM_TRANSITO">Em Trânsito</option>
+          <option value="ENTREGUE">Entregue</option>
+          <option value="EM_TROCA">Em Troca</option>
+          <option value="TROCADO">Trocado</option>
+          <option value="REPROVADA">Reprovada</option>
+        </select>
+      </div>
+
+      <div id="lista-pedidos">
+        <!-- Pedidos serão carregados dinamicamente -->
+      </div>
+
+      <!-- Modal para solicitar troca -->
+      <div id="modal-troca" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Solicitar Troca</h3>
+          <form id="form-troca">
+            <div id="itens-troca">
+              <!-- Itens disponíveis para troca -->
+            </div>
+            <label for="motivo-troca">Motivo da troca:</label>
+            <textarea
+              id="motivo-troca"
+              required
+              placeholder="Descreva o motivo da troca"
+            ></textarea>
+            <button type="submit" class="btn btn-primary">
+              Solicitar Troca
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal para detalhes do pedido -->
+      <div id="modal-detalhes" class="modal">
+        <div class="modal-content modal-large">
+          <span class="close">&times;</span>
+          <h3>Detalhes do Pedido</h3>
+          <div id="conteudo-detalhes">
+            <!-- Detalhes serão carregados dinamicamente -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        carregarPedidos();
+        atualizarContadorCarrinho();
+        inicializarModals();
+
+        document
+          .getElementById("status-filtro")
+          .addEventListener("change", filtrarPedidos);
+      });
+    </script>
+  </body>
+</html>

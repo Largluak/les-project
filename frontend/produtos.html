@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produtos - Sistema de Vendas</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Vendas Eletrônicas</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html" class="ativo">Produtos</a>
+        <a href="carrinho.html"
+          >Carrinho (<span id="contador-carrinho">0</span>)</a
+        >
+        <a href="pedidos.html">Meus Pedidos</a>
+        <a href="admin.html">Administração</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Catálogo de Produtos</h2>
+
+      <div class="filtros">
+        <input
+          type="text"
+          id="busca-produto"
+          placeholder="Buscar produtos..."
+        />
+        <select id="categoria-filtro">
+          <option value="">Todas as categorias</option>
+          <option value="eletrônicos">Eletrônicos</option>
+          <option value="informática">Informática</option>
+          <option value="casa">Casa e Jardim</option>
+        </select>
+      </div>
+
+      <div id="lista-produtos" class="produtos-grid">
+        <!-- Produtos serão carregados dinamicamente -->
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        carregarProdutos();
+        atualizarContadorCarrinho();
+
+        // Filtros
+        document
+          .getElementById("busca-produto")
+          .addEventListener("input", filtrarProdutos);
+        document
+          .getElementById("categoria-filtro")
+          .addEventListener("change", filtrarProdutos);
+      });
+    </script>
+  </body>
+</html>

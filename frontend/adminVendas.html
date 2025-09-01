@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administração - Sistema de Vendas</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Vendas Eletrônicas</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="carrinho.html"
+          >Carrinho (<span id="contador-carrinho">0</span>)</a
+        >
+        <a href="pedidos.html">Meus Pedidos</a>
+        <a href="admin.html" class="ativo">Administração</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Área de Administração</h2>
+
+      <div class="admin-tabs">
+        <button class="tab-btn active" onclick="mostrarTab('vendas')">
+          Gerenciar Vendas
+        </button>
+        <button class="tab-btn" onclick="mostrarTab('trocas')">
+          Gerenciar Trocas
+        </button>
+        <button class="tab-btn" onclick="mostrarTab('entregas')">
+          Gerenciar Entregas
+        </button>
+      </div>
+
+      <div id="tab-vendas" class="tab-content active">
+        <h3>Vendas para Aprovação</h3>
+        <div class="filtros">
+          <select id="status-vendas-filtro">
+            <option value="">Todos os status</option>
+            <option value="EM_PROCESSAMENTO">Em Processamento</option>
+            <option value="APROVADA">Aprovada</option>
+            <option value="REPROVADA">Reprovada</option>
+          </select>
+        </div>
+        <div id="lista-vendas" class="tabela-container">
+          <!-- Vendas serão carregadas aqui -->
+        </div>
+      </div>
+
+      <div id="tab-trocas" class="tab-content">
+        <h3>Pedidos de Troca</h3>
+        <div class="filtros">
+          <select id="status-trocas-filtro">
+            <option value="">Todos os status</option>
+            <option value="EM_TROCA">Em Troca</option>
+            <option value="TROCA_AUTORIZADA">Troca Autorizada</option>
+            <option value="TROCADO">Trocado</option>
+          </select>
+        </div>
+        <div id="lista-trocas" class="tabela-container">
+          <!-- Trocas serão carregadas aqui -->
+        </div>
+      </div>
+
+      <div id="tab-entregas" class="tab-content">
+        <h3>Gerenciar Entregas</h3>
+        <div class="filtros">
+          <select id="status-entregas-filtro">
+            <option value="">Todos os status</option>
+            <option value="APROVADA">Aprovada</option>
+            <option value="EM_TRANSITO">Em Trânsito</option>
+            <option value="ENTREGUE">Entregue</option>
+          </select>
+        </div>
+        <div id="lista-entregas" class="tabela-container">
+          <!-- Entregas serão carregadas aqui -->
+        </div>
+      </div>
+
+      <!-- Modal para detalhes da venda -->
+      <div id="modal-detalhes-venda" class="modal">
+        <div class="modal-content modal-large">
+          <span class="close">&times;</span>
+          <h3>Detalhes da Venda</h3>
+          <div id="conteudo-detalhes-venda">
+            <!-- Detalhes serão carregados dinamicamente -->
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-success" onclick="aprovarVenda()">
+              Aprovar
+            </button>
+            <button class="btn btn-danger" onclick="reprovarVenda()">
+              Reprovar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal para autorizar troca -->
+      <div id="modal-autorizar-troca" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Autorizar Troca</h3>
+          <div id="conteudo-troca">
+            <!-- Detalhes da troca -->
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-success" onclick="autorizarTroca()">
+              Autorizar Troca
+            </button>
+            <button class="btn btn-danger" onclick="negarTroca()">
+              Negar Troca
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal para confirmar recebimento de troca -->
+      <div id="modal-recebimento-troca" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Confirmar Recebimento</h3>
+          <form id="form-recebimento">
+            <div id="itens-recebimento">
+              <!-- Itens da troca -->
+            </div>
+            <label>
+              <input type="checkbox" id="retornar-estoque" />
+              Retornar itens ao estoque
+            </label>
+            <div class="modal-actions">
+              <button type="submit" class="btn btn-success">
+                Confirmar Recebimento
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        carregarDadosAdmin();
+        atualizarContadorCarrinho();
+        inicializarModals();
+
+        // Filtros
+        document
+          .getElementById("status-vendas-filtro")
+          .addEventListener("change", () => filtrarTabela("vendas"));
+        document
+          .getElementById("status-trocas-filtro")
+          .addEventListener("change", () => filtrarTabela("trocas"));
+        document
+          .getElementById("status-entregas-filtro")
+          .addEventListener("change", () => filtrarTabela("entregas"));
+      });
+    </script>
+  </body>
+</html>

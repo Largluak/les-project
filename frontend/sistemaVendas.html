@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Vendas Eletrônicas</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Vendas Eletrônicas</h1>
+      <nav>
+        <a href="index.html" class="ativo">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="carrinho.html"
+          >Carrinho (<span id="contador-carrinho">0</span>)</a
+        >
+        <a href="pedidos.html">Meus Pedidos</a>
+        <a href="admin.html">Administração</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Bem-vindo ao Sistema de Vendas</h2>
+
+      <div class="dashboard-cards">
+        <div class="card">
+          <h3>Produtos</h3>
+          <p>Navegue por nosso catálogo de produtos disponíveis</p>
+          <a href="produtos.html" class="btn btn-primary">Ver Produtos</a>
+        </div>
+
+        <div class="card">
+          <h3>Carrinho de Compras</h3>
+          <p>Gerencie seus itens selecionados</p>
+          <a href="carrinho.html" class="btn btn-primary">Ir ao Carrinho</a>
+        </div>
+
+        <div class="card">
+          <h3>Meus Pedidos</h3>
+          <p>Acompanhe o status dos seus pedidos</p>
+          <a href="pedidos.html" class="btn btn-primary">Ver Pedidos</a>
+        </div>
+
+        <div class="card">
+          <h3>Administração</h3>
+          <p>Área restrita para administradores</p>
+          <a href="admin.html" class="btn btn-secondary">Acessar Admin</a>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

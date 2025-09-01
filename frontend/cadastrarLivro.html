@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastrar Livro - Sistema de Livros</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Livros</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="cadastrarLivro.html" class="ativo">Cadastrar Livro</a>
+        <a href="consultarLivros.html">Consultar Livros</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Cadastrar Novo Livro</h2>
+
+      <form id="formCadastroLivro" class="form-livro">
+        <div class="form-section">
+          <h3>Informações Básicas</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="titulo">Título *</label>
+              <input type="text" id="titulo" name="titulo" required />
+            </div>
+            <div class="form-group">
+              <label for="isbn">ISBN *</label>
+              <input type="text" id="isbn" name="isbn" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="autor">Autor *</label>
+              <select id="autor" name="autor" required>
+                <option value="">Selecione um autor</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editora">Editora *</label>
+              <select id="editora" name="editora" required>
+                <option value="">Selecione uma editora</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ano">Ano *</label>
+              <input
+                type="number"
+                id="ano"
+                name="ano"
+                min="1000"
+                max="2025"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="edicao">Edição *</label>
+              <input type="number" id="edicao" name="edicao" min="1" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="numeroPaginas">Número de Páginas *</label>
+              <input
+                type="number"
+                id="numeroPaginas"
+                name="numeroPaginas"
+                min="1"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="codigoBarras">Código de Barras *</label>
+              <input
+                type="text"
+                id="codigoBarras"
+                name="codigoBarras"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Categorização</h3>
+          <div class="form-group">
+            <label for="categorias">Categorias *</label>
+            <div class="checkbox-group" id="categorias">
+              <!-- Categorias serão carregadas via JavaScript -->
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="grupoPrecificacao">Grupo de Precificação *</label>
+            <select id="grupoPrecificacao" name="grupoPrecificacao" required>
+              <option value="">Selecione um grupo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Dimensões</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="altura">Altura (cm) *</label>
+              <input
+                type="number"
+                id="altura"
+                name="altura"
+                step="0.1"
+                min="0"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="largura">Largura (cm) *</label>
+              <input
+                type="number"
+                id="largura"
+                name="largura"
+                step="0.1"
+                min="0"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="profundidade">Profundidade (cm) *</label>
+              <input
+                type="number"
+                id="profundidade"
+                name="profundidade"
+                step="0.1"
+                min="0"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="peso">Peso (g) *</label>
+              <input
+                type="number"
+                id="peso"
+                name="peso"
+                step="1"
+                min="0"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Sinopse</h3>
+          <div class="form-group">
+            <label for="sinopse">Sinopse *</label>
+            <textarea id="sinopse" name="sinopse" rows="4" required></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Estoque e Preço</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="estoque">Estoque Inicial</label>
+              <input
+                type="number"
+                id="estoque"
+                name="estoque"
+                min="0"
+                value="0"
+              />
+            </div>
+            <div class="form-group">
+              <label for="custoUnitario">Custo Unitário (R$)</label>
+              <input
+                type="number"
+                id="custoUnitario"
+                name="custoUnitario"
+                step="0.01"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="precoVenda">Preço de Venda (R$)</label>
+              <input
+                type="number"
+                id="precoVenda"
+                name="precoVenda"
+                step="0.01"
+                min="0"
+                readonly
+              />
+              <small
+                >Calculado automaticamente baseado no grupo de
+                precificação</small
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="limparFormulario()"
+          >
+            Limpar
+          </button>
+          <button type="submit" class="btn-primary">Cadastrar Livro</button>
+        </div>
+      </form>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        carregarDadosFormulario();
+        configurarEventosFormulario();
+      });
+    </script>
+  </body>
+</html>
