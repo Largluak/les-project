@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recomendações Personalizadas - Sistema de Livros</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>📚 Sistema de Livros</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="recomendacoes.html" class="ativo">Recomendações IA</a>
+        <a href="chatbot.html">Chatbot Assistente</a>
+        <a href="historico.html">Histórico & Preferências</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="page-header">
+        <h2>🤖 Recomendações Personalizadas com IA</h2>
+        <button class="btn-primary" onclick="gerarNovasRecomendacoes()">
+          ✨ Gerar Novas Recomendações
+        </button>
+      </div>
+
+      <div class="filters-section">
+        <div class="filter-group">
+          <label for="genero-filter">Gênero:</label>
+          <select id="genero-filter" onchange="filtrarRecomendacoes()">
+            <option value="">Todos</option>
+            <option value="ficcao">Ficção</option>
+            <option value="romance">Romance</option>
+            <option value="misterio">Mistério</option>
+            <option value="fantasia">Fantasia</option>
+            <option value="biografia">Biografia</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="confianca-filter">Confiança da IA:</label>
+          <select id="confianca-filter" onchange="filtrarRecomendacoes()">
+            <option value="">Todas</option>
+            <option value="alta">Alta (90%+)</option>
+            <option value="media">Média (70-89%)</option>
+            <option value="baixa">Baixa (<70%)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ai-insights">
+        <h3>💡 Insights da IA sobre suas preferências</h3>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <h4>Gêneros Favoritos</h4>
+            <div class="preference-bar">
+              <div class="preference-item">
+                <span>Ficção Científica</span>
+                <div class="bar">
+                  <div class="fill" style="width: 85%"></div>
+                </div>
+                <span>85%</span>
+              </div>
+              <div class="preference-item">
+                <span>Mistério</span>
+                <div class="bar">
+                  <div class="fill" style="width: 72%"></div>
+                </div>
+                <span>72%</span>
+              </div>
+              <div class="preference-item">
+                <span>Romance</span>
+                <div class="bar">
+                  <div class="fill" style="width: 68%"></div>
+                </div>
+                <span>68%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <h4>Padrões de Leitura</h4>
+            <ul class="pattern-list">
+              <li>📅 Prefere livros de 200-400 páginas</li>
+              <li>⭐ Avalia bem livros com nota 4.2+</li>
+              <li>📖 Lê em média 2 livros por mês</li>
+              <li>🕒 Mais ativo nos fins de semana</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="recomendacoes-container">
+        <h3>📚 Suas Recomendações Personalizadas</h3>
+        <div id="recomendacoes-lista" class="recomendacoes-grid">
+          <!-- Recomendações serão carregadas via JavaScript -->
+        </div>
+      </div>
+
+      <div class="feedback-section">
+        <h3>💭 Feedback para melhorar as recomendações</h3>
+        <div class="feedback-form">
+          <textarea
+            id="feedback-text"
+            placeholder="Conte-nos o que achou das recomendações ou o que gostaria de ver..."
+          ></textarea>
+          <button class="btn-secondary" onclick="enviarFeedback()">
+            Enviar Feedback
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

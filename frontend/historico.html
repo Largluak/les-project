@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Histórico & Preferências - Sistema de Livros</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>📚 Sistema de Livros</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="recomendacoes.html">Recomendações IA</a>
+        <a href="chatbot.html">Chatbot Assistente</a>
+        <a href="historico.html" class="ativo">Histórico & Preferências</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="page-tabs">
+        <button class="tab-btn active" onclick="mostrarTab('historico')">
+          📚 Histórico de Compras
+        </button>
+        <button class="tab-btn" onclick="mostrarTab('preferencias')">
+          ⚙️ Preferências
+        </button>
+        <button class="tab-btn" onclick="mostrarTab('treinamento')">
+          🧠 Dados de Treinamento
+        </button>
+      </div>
+
+      <!-- Tab Histórico -->
+      <div id="historico-tab" class="tab-content active">
+        <div class="section-header">
+          <h2>📚 Histórico de Compras e Avaliações</h2>
+          <div class="filters">
+            <select id="periodo-filter" onchange="filtrarHistorico()">
+              <option value="todos">Todos os períodos</option>
+              <option value="30">Últimos 30 dias</option>
+              <option value="90">Últimos 3 meses</option>
+              <option value="365">Último ano</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="historico-stats">
+          <div class="stat-card">
+            <h3>📖 Total de Livros</h3>
+            <span class="big-number">127</span>
+          </div>
+          <div class="stat-card">
+            <h3>💰 Valor Investido</h3>
+            <span class="big-number">R$ 2.847</span>
+          </div>
+          <div class="stat-card">
+            <h3>⭐ Avaliação Média</h3>
+            <span class="big-number">4.2</span>
+          </div>
+          <div class="stat-card">
+            <h3>🎯 Taxa de Satisfação</h3>
+            <span class="big-number">89%</span>
+          </div>
+        </div>
+
+        <div class="historico-lista" id="historico-compras">
+          <!-- Lista será carregada via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Tab Preferências -->
+      <div id="preferencias-tab" class="tab-content">
+        <div class="section-header">
+          <h2>⚙️ Configuração de Preferências</h2>
+          <button class="btn-primary" onclick="salvarPreferencias()">
+            💾 Salvar Alterações
+          </button>
+        </div>
+
+        <div class="preferencias-form">
+          <div class="pref-section">
+            <h3>📚 Gêneros Preferidos</h3>
+            <div class="checkbox-grid">
+              <label
+                ><input type="checkbox" value="ficcao" checked /> Ficção</label
+              >
+              <label
+                ><input type="checkbox" value="romance" checked />
+                Romance</label
+              >
+              <label><input type="checkbox" value="misterio" /> Mistério</label>
+              <label
+                ><input type="checkbox" value="fantasia" checked />
+                Fantasia</label
+              >
+              <label
+                ><input type="checkbox" value="biografia" /> Biografia</label
+              >
+              <label><input type="checkbox" value="historia" /> História</label>
+              <label><input type="checkbox" value="ciencia" /> Ciência</label>
+              <label
+                ><input type="checkbox" value="autoajuda" /> Autoajuda</label
+              >
+            </div>
+          </div>
+
+          <div class="pref-section">
+            <h3>📄 Preferências de Leitura</h3>
+            <div class="form-group">
+              <label for="tamanho-livro">Tamanho preferido:</label>
+              <select id="tamanho-livro">
+                <option value="curto">Curto (até 200 páginas)</option>
+                <option value="medio" selected>Médio (200-400 páginas)</option>
+                <option value="longo">Longo (400+ páginas)</option>
+                <option value="qualquer">Qualquer tamanho</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="frequencia-rec">Frequência de recomendações:</label>
+              <select id="frequencia-rec">
+                <option value="diaria">Diária</option>
+                <option value="semanal" selected>Semanal</option>
+                <option value="mensal">Mensal</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="orcamento">Orçamento mensal (R$):</label>
+              <input
+                type="number"
+                id="orcamento"
+                value="200"
+                min="0"
+                step="10"
+              />
+            </div>
+          </div>
+
+          <div class="pref-section">
+            <h3>🤖 Configurações da IA</h3>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" checked />
+                Permitir recomendações baseadas em outros usuários similares
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" checked />
+                Incluir livros de autores desconhecidos nas recomendações
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" />
+                Focar apenas em livros com alta avaliação (4+ estrelas)
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Treinamento -->
+      <div id="treinamento-tab" class="tab-content">
+        <div class="section-header">
+          <h2>🧠 Dados de Treinamento da IA</h2>
+          <button class="btn-primary" onclick="retreinarModelo()">
+            🔄 Retreinar Modelo
+          </button>
+        </div>
+
+        <div class="treinamento-info">
+          <div class="info-card">
+            <h3>📊 Status do Modelo</h3>
+            <div class="model-status">
+              <div class="status-item">
+                <span class="label">Última atualização:</span>
+                <span class="value">há 2 horas</span>
+              </div>
+              <div class="status-item">
+                <span class="label">Dados processados:</span>
+                <span class="value">1.247.892 interações</span>
+              </div>
+              <div class="status-item">
+                <span class="label">Precisão atual:</span>
+                <span class="value">94.7%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>📈 Evolução da Precisão</h3>
+            <div class="precision-chart">
+              <div class="chart-placeholder">
+                [Gráfico de evolução da precisão ao longo do tempo]
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>💭 Seus Feedbacks</h3>
+            <div class="feedback-summary">
+              <div class="feedback-item positive">
+                <span class="feedback-count">127</span>
+                <span class="feedback-label">👍 Positivos</span>
+              </div>
+              <div class="feedback-item neutral">
+                <span class="feedback-count">23</span>
+                <span class="feedback-label">😐 Neutros</span>
+              </div>
+              <div class="feedback-item negative">
+                <span class="feedback-count">8</span>
+                <span class="feedback-label">👎 Negativos</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

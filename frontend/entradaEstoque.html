@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Livraria - Entrada em Estoque</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Livraria</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="entradaEstoque.html" class="ativo">Entrada em Estoque</a>
+        <a href="consultarEstoque.html">Consultar Estoque</a>
+        <a href="reentradaEstoque.html">Reentrada de Estoque</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Entrada em Estoque</h2>
+
+      <form id="formEntradaEstoque" class="form-container">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="livroId">Livro *</label>
+            <select id="livroId" name="livroId" required>
+              <option value="">Selecione um livro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="quantidade">Quantidade *</label>
+            <input
+              type="number"
+              id="quantidade"
+              name="quantidade"
+              min="1"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="valorCusto">Valor de Custo (R$) *</label>
+            <input
+              type="number"
+              id="valorCusto"
+              name="valorCusto"
+              step="0.01"
+              min="0.01"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="fornecedor">Fornecedor *</label>
+            <input type="text" id="fornecedor" name="fornecedor" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dataEntrada">Data de Entrada *</label>
+            <input type="date" id="dataEntrada" name="dataEntrada" required />
+          </div>
+
+          <div class="form-group">
+            <label for="valorVenda">Valor de Venda (R$)</label>
+            <input
+              type="number"
+              id="valorVenda"
+              name="valorVenda"
+              step="0.01"
+              readonly
+            />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="limparFormulario()"
+          >
+            Limpar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Registrar Entrada
+          </button>
+        </div>
+      </form>
+
+      <div class="info-card">
+        <h3>Informações</h3>
+        <ul>
+          <li>Todos os campos marcados com * são obrigatórios</li>
+          <li>
+            O valor de venda será calculado automaticamente baseado no grupo de
+            precificação do livro
+          </li>
+          <li>A quantidade deve ser maior que zero</li>
+        </ul>
+      </div>
+
+      <div class="historico-entradas">
+        <h3>Últimas Entradas</h3>
+        <div class="table-container">
+          <table id="tabelaHistoricoEntradas">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Livro</th>
+                <th>Quantidade</th>
+                <th>Valor Custo</th>
+                <th>Valor Venda</th>
+                <th>Fornecedor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Preenchido via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      // Inicializa a página de entrada
+      if (typeof initEntradaEstoque === "function") {
+        initEntradaEstoque();
+      }
+    </script>
+  </body>
+</html>

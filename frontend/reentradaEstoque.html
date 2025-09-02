@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Livraria - Reentrada de Estoque</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Livraria</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="entradaEstoque.html">Entrada em Estoque</a>
+        <a href="consultarEstoque.html">Consultar Estoque</a>
+        <a href="reentradaEstoque.html" class="ativo">Reentrada de Estoque</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Reentrada de Estoque</h2>
+
+      <form id="formReentradaEstoque" class="form-container">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tipoOperacao">Tipo de Operação *</label>
+            <select
+              id="tipoOperacao"
+              name="tipoOperacao"
+              required
+              onchange="atualizarCamposOperacao()"
+            >
+              <option value="">Selecione o tipo</option>
+              <option value="troca">Troca de Produto</option>
+              <option value="devolucao">Devolução</option>
+              <option value="ajuste">Ajuste de Estoque</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="numeroVenda">Número da Venda</label>
+            <input
+              type="text"
+              id="numeroVenda"
+              name="numeroVenda"
+              placeholder="Opcional"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="livroReentrada">Livro *</label>
+            <select id="livroReentrada" name="livroReentrada" required>
+              <option value="">Selecione um livro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="quantidadeReentrada">Quantidade *</label>
+            <input
+              type="number"
+              id="quantidadeReentrada"
+              name="quantidadeReentrada"
+              min="1"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dataReentrada">Data da Reentrada *</label>
+            <input
+              type="date"
+              id="dataReentrada"
+              name="dataReentrada"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="motivoReentrada">Motivo *</label>
+            <select id="motivoReentrada" name="motivoReentrada" required>
+              <option value="">Selecione um motivo</option>
+              <option value="produto_defeituoso">Produto Defeituoso</option>
+              <option value="produto_errado">Produto Errado</option>
+              <option value="desistencia">Desistência do Cliente</option>
+              <option value="ajuste_inventario">Ajuste de Inventário</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="observacoes">Observações</label>
+          <textarea
+            id="observacoes"
+            name="observacoes"
+            rows="3"
+            placeholder="Detalhes adicionais sobre a reentrada"
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="limparFormularioReentrada()"
+          >
+            Limpar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Processar Reentrada
+          </button>
+        </div>
+      </form>
+
+      <div class="info-card">
+        <h3>Informações sobre Reentrada</h3>
+        <ul>
+          <li>
+            <strong>Troca:</strong> Para produtos trocados por defeito ou erro
+          </li>
+          <li>
+            <strong>Devolução:</strong> Para produtos devolvidos pelo cliente
+          </li>
+          <li><strong>Ajuste:</strong> Para correções de inventário</li>
+          <li>A reentrada aumentará automaticamente o estoque do item</li>
+        </ul>
+      </div>
+
+      <div class="historico-reentradas">
+        <h3>Histórico de Reentradas</h3>
+        <div class="table-container">
+          <table id="tabelaHistoricoReentradas">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Livro</th>
+                <th>Quantidade</th>
+                <th>Tipo</th>
+                <th>Motivo</th>
+                <th>Observações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Preenchido via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      // Inicializa a página de reentrada
+      if (typeof initReentradaEstoque === "function") {
+        initReentradaEstoque();
+      }
+    </script>
+  </body>
+</html>

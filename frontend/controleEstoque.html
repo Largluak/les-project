@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Livraria - Controle de Estoque</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Livraria</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="entradaEstoque.html">Entrada em Estoque</a>
+        <a href="consultarEstoque.html">Consultar Estoque</a>
+        <a href="reentradaEstoque.html">Reentrada de Estoque</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Controle de Estoque</h2>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Entrada em Estoque</h3>
+          <p>Registre a entrada de novos livros no estoque.</p>
+          <a href="entradaEstoque.html" class="btn btn-primary">Acessar</a>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Consultar Estoque</h3>
+          <p>Visualize e gerencie os livros disponíveis no estoque.</p>
+          <a href="consultarEstoque.html" class="btn btn-primary">Acessar</a>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>Reentrada de Estoque</h3>
+          <p>Processe devoluções e trocas de produtos.</p>
+          <a href="reentradaEstoque.html" class="btn btn-primary">Acessar</a>
+        </div>
+      </div>
+
+      <div class="resumo-estoque">
+        <h3>Resumo do Estoque</h3>
+        <div class="resumo-cards">
+          <div class="resumo-card">
+            <span class="resumo-numero" id="totalLivros">--</span>
+            <span class="resumo-label">Total de Livros</span>
+          </div>
+          <div class="resumo-card">
+            <span class="resumo-numero" id="valorTotal">R$ --</span>
+            <span class="resumo-label">Valor Total do Estoque</span>
+          </div>
+          <div class="resumo-card">
+            <span class="resumo-numero" id="livrosBaixoEstoque">--</span>
+            <span class="resumo-label">Livros com Baixo Estoque</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1844,7 +1844,12 @@ const produtos = [
 ];
 
 // Dados do carrinho
-let carrinho = [];
+let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+// salvar carrinho
+function salvarCarrinho() {
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+}
 
 // Dados dos pedidos
 let pedidos = [
@@ -1885,6 +1890,33 @@ let pedidos = [
     frete: 4.99,
     endereco: "Rua Augusta, 789 - São Paulo, SP",
     pagamento: "Cartão **** 9012",
+  },
+  {
+    id: 2004,
+    data: "2024-02-12",
+    status: "EM_TROCA",
+    itens: [
+      {
+        produtoId: 6,
+        nome: "A Revolução dos Bichos",
+        quantidade: 1,
+        preco: 34.9,
+      },
+    ],
+    total: 39.89,
+    frete: 4.99,
+    endereco: "Rua XV de Novembro, 321 - Curitiba, PR",
+    pagamento: "Boleto",
+  },
+  {
+    id: 2005,
+    data: "2024-02-15",
+    status: "TROCA_AUTORIZADA",
+    itens: [{ produtoId: 7, nome: "1984", quantidade: 1, preco: 45.0 }],
+    total: 49.99,
+    frete: 4.99,
+    endereco: "Av. Brasil, 789 - Rio de Janeiro, RJ",
+    pagamento: "Pix",
   },
 ];
 
@@ -2023,6 +2055,7 @@ function adicionarAoCarrinho(produtoId, quantidade = 1) {
       dataAdicao: new Date(),
       bloqueado: true,
     });
+    salvarCarrinho();
   }
 
   // Bloquear estoque temporariamente
@@ -2047,6 +2080,7 @@ function removerDoCarrinho(produtoId) {
 
     carrinho.splice(itemIndex, 1);
     atualizarContadorCarrinho();
+    salvarCarrinho();
 
     if (document.getElementById("itens-carrinho")) {
       carregarCarrinho();
@@ -2075,6 +2109,7 @@ function alterarQuantidadeCarrinho(produtoId, novaQuantidade) {
 
     item.quantidade = novaQuantidade;
     atualizarContadorCarrinho();
+    salvarCarrinho();
     carregarCarrinho();
     return true;
   }
@@ -2752,7 +2787,7 @@ function carregarEntregasAdmin() {
     `;
 }
 
-function mostrarTab(tabName) {
+function mostrarTabAdmin(tabName) {
   // Ocultar todas as tabs
   document.querySelectorAll(".tab-content").forEach((tab) => {
     tab.classList.remove("active");
@@ -2847,10 +2882,13 @@ function confirmarRecebimentoRapido(pedidoId) {
 
 function filtrarTabela(tipo) {
   if (tipo === "vendas") {
+    const status = document.getElementById("status-vendas-filtro").value;
     carregarVendasAdmin();
   } else if (tipo === "trocas") {
+    const status = document.getElementById("status-trocas-filtro").value;
     carregarTrocasAdmin();
   } else if (tipo === "entregas") {
+    const status = document.getElementById("status-entregas-filtro").value;
     carregarEntregasAdmin();
   }
 }
@@ -2910,6 +2948,7 @@ function inicializarModals() {
 
       pedidos.push(novoPedido);
       carrinho = [];
+      salvarCarrinho();
       atualizarContadorCarrinho();
 
       document.getElementById("modal-checkout").style.display = "none";
@@ -2992,3 +3031,1900 @@ document.addEventListener("DOMContentLoaded", function () {
   // Configurar eventos globais
   inicializarModals();
 });
+
+// ==============================
+// DADOS MOCKADOS PARA CONTROLE DE ESTOQUE
+// ==============================
+
+// Dados mockados de livros
+const livrosMockados = [
+  {
+    id: 1,
+    titulo: "Dom Casmurro",
+    autor: "Machado de Assis",
+    isbn: "978-85-359-0277-5",
+    categoria: "Literatura Brasileira",
+    grupoPrecificacao: { percentual: 40 },
+  },
+  {
+    id: 2,
+    titulo: "1984",
+    autor: "George Orwell",
+    isbn: "978-85-250-4616-4",
+    categoria: "Ficção Científica",
+    grupoPrecificacao: { percentual: 50 },
+  },
+  {
+    id: 3,
+    titulo: "O Pequeno Príncipe",
+    autor: "Antoine de Saint-Exupéry",
+    isbn: "978-85-359-0816-6",
+    categoria: "Literatura Infantil",
+    grupoPrecificacao: { percentual: 35 },
+  },
+  {
+    id: 4,
+    titulo: "Clean Code",
+    autor: "Robert C. Martin",
+    isbn: "978-0-13-235088-4",
+    categoria: "Tecnologia",
+    grupoPrecificacao: { percentual: 60 },
+  },
+  {
+    id: 5,
+    titulo: "Sapiens",
+    autor: "Yuval Noah Harari",
+    isbn: "978-85-359-2866-9",
+    categoria: "História",
+    grupoPrecificacao: { percentual: 45 },
+  },
+];
+
+// Dados mockados de estoque
+let estoqueMockado = [
+  {
+    livroId: 1,
+    quantidade: 15,
+    valorCusto: 25.0,
+    valorVenda: 35.0,
+    dataUltimaEntrada: "2025-08-15",
+    fornecedor: "Editora Globo",
+  },
+  {
+    livroId: 2,
+    quantidade: 8,
+    valorCusto: 30.0,
+    valorVenda: 45.0,
+    dataUltimaEntrada: "2025-08-20",
+    fornecedor: "Companhia das Letras",
+  },
+  {
+    livroId: 3,
+    quantidade: 3,
+    valorCusto: 20.0,
+    valorVenda: 27.0,
+    dataUltimaEntrada: "2025-08-10",
+    fornecedor: "Agir Editora",
+  },
+  {
+    livroId: 4,
+    quantidade: 0,
+    valorCusto: 80.0,
+    valorVenda: 128.0,
+    dataUltimaEntrada: "2025-07-30",
+    fornecedor: "Alta Books",
+  },
+  {
+    livroId: 5,
+    quantidade: 12,
+    valorCusto: 35.0,
+    valorVenda: 50.75,
+    dataUltimaEntrada: "2025-08-25",
+    fornecedor: "Companhia das Letras",
+  },
+];
+
+// Histórico de entradas
+let historicoEntradas = [
+  {
+    id: 1,
+    livroId: 1,
+    quantidade: 10,
+    valorCusto: 25.0,
+    valorVenda: 35.0,
+    fornecedor: "Editora Globo",
+    dataEntrada: "2025-08-15",
+  },
+  {
+    id: 2,
+    livroId: 2,
+    quantidade: 5,
+    valorCusto: 30.0,
+    valorVenda: 45.0,
+    fornecedor: "Companhia das Letras",
+    dataEntrada: "2025-08-20",
+  },
+];
+
+// Histórico de reentradas
+let historicoReentradas = [
+  {
+    id: 1,
+    livroId: 1,
+    quantidade: 2,
+    tipo: "troca",
+    motivo: "produto_defeituoso",
+    observacoes: "Páginas soltas",
+    dataReentrada: "2025-08-25",
+  },
+];
+
+// ==============================
+// FUNÇÕES UTILITÁRIAS
+// ==============================
+
+// Busca livro por ID
+function buscarLivroPorId(id) {
+  return livrosMockados.find((livro) => livro.id == id);
+}
+
+// Busca estoque por livro ID
+function buscarEstoquePorLivroId(livroId) {
+  return estoqueMockado.find((item) => item.livroId == livroId);
+}
+
+// Calcula valor de venda
+function calcularValorVenda(valorCusto, percentualPrecificacao) {
+  return valorCusto * (1 + percentualPrecificacao / 100);
+}
+
+// Formata moeda
+function formatarMoeda(valor) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(valor);
+}
+
+// Formata data
+function formatarData(data) {
+  return new Date(data).toLocaleDateString("pt-BR");
+}
+
+// Determina status do estoque
+function determinarStatusEstoque(quantidade) {
+  if (quantidade === 0) return "zerado";
+  if (quantidade <= 5) return "baixo";
+  return "disponivel";
+}
+
+// ==============================
+// PÁGINA INDEX - DASHBOARD
+// ==============================
+
+// Inicializa dashboard quando a página carrega
+document.addEventListener("DOMContentLoaded", function () {
+  if (
+    window.location.pathname.includes("index.html") ||
+    window.location.pathname === "/"
+  ) {
+    initDashboard();
+  }
+});
+
+function initDashboard() {
+  atualizarResumoEstoque();
+}
+
+function atualizarResumoEstoque() {
+  const totalLivros = estoqueMockado.reduce(
+    (total, item) => total + item.quantidade,
+    0
+  );
+  const valorTotal = estoqueMockado.reduce(
+    (total, item) => total + item.quantidade * item.valorCusto,
+    0
+  );
+  const livrosBaixoEstoque = estoqueMockado.filter(
+    (item) => item.quantidade <= 5 && item.quantidade > 0
+  ).length;
+
+  const elementoTotalLivros = document.getElementById("totalLivros");
+  const elementoValorTotal = document.getElementById("valorTotal");
+  const elementoLivrosBaixoEstoque =
+    document.getElementById("livrosBaixoEstoque");
+
+  if (elementoTotalLivros) elementoTotalLivros.textContent = totalLivros;
+  if (elementoValorTotal)
+    elementoValorTotal.textContent = formatarMoeda(valorTotal);
+  if (elementoLivrosBaixoEstoque)
+    elementoLivrosBaixoEstoque.textContent = livrosBaixoEstoque;
+}
+
+// ==============================
+// PÁGINA ENTRADA EM ESTOQUE
+// ==============================
+
+function initEntradaEstoque() {
+  preencherSelectLivros("livroId");
+  preencherDataAtual("dataEntrada");
+  configurarCalculoValorVenda();
+  carregarHistoricoEntradas();
+
+  document
+    .getElementById("formEntradaEstoque")
+    .addEventListener("submit", processarEntradaEstoque);
+}
+
+function preencherSelectLivros(selectId) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Selecione um livro</option>';
+  livrosMockados.forEach((livro) => {
+    const option = document.createElement("option");
+    option.value = livro.id;
+    option.textContent = `${livro.titulo} - ${livro.autor}`;
+    select.appendChild(option);
+  });
+}
+
+function preencherDataAtual(inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  const hoje = new Date().toISOString().split("T")[0];
+  input.value = hoje;
+}
+
+function configurarCalculoValorVenda() {
+  const livroSelect = document.getElementById("livroId");
+  const valorCustoInput = document.getElementById("valorCusto");
+  const valorVendaInput = document.getElementById("valorVenda");
+
+  if (!livroSelect || !valorCustoInput || !valorVendaInput) return;
+
+  function calcularEExibirValorVenda() {
+    const livroId = livroSelect.value;
+    const valorCusto = parseFloat(valorCustoInput.value);
+
+    if (livroId && valorCusto > 0) {
+      const livro = buscarLivroPorId(livroId);
+      if (livro) {
+        const valorVenda = calcularValorVenda(
+          valorCusto,
+          livro.grupoPrecificacao.percentual
+        );
+        valorVendaInput.value = valorVenda.toFixed(2);
+      }
+    } else {
+      valorVendaInput.value = "";
+    }
+  }
+
+  livroSelect.addEventListener("change", calcularEExibirValorVenda);
+  valorCustoInput.addEventListener("input", calcularEExibirValorVenda);
+}
+
+function processarEntradaEstoque(event) {
+  event.preventDefault();
+
+  const formData = new FormData(event.target);
+  const dados = {
+    livroId: parseInt(formData.get("livroId")),
+    quantidade: parseInt(formData.get("quantidade")),
+    valorCusto: parseFloat(formData.get("valorCusto")),
+    fornecedor: formData.get("fornecedor"),
+    dataEntrada: formData.get("dataEntrada"),
+    valorVenda: parseFloat(formData.get("valorVenda")),
+  };
+
+  // Validações conforme RN0051, RN0061, RN0062, RNF0064
+  if (!validarEntradaEstoque(dados)) {
+    return;
+  }
+
+  // Registra entrada
+  registrarEntradaEstoque(dados);
+
+  // Limpa formulário
+  event.target.reset();
+  preencherDataAtual("dataEntrada");
+
+  // Atualiza histórico
+  carregarHistoricoEntradas();
+
+  alert("Entrada registrada com sucesso!");
+}
+
+function validarEntradaEstoque(dados) {
+  // RN0061: Quantidade não pode ser zero
+  if (dados.quantidade <= 0) {
+    alert("A quantidade deve ser maior que zero.");
+    return false;
+  }
+
+  // RN0062: Deve haver valor de custo
+  if (dados.valorCusto <= 0) {
+    alert("O valor de custo deve ser maior que zero.");
+    return false;
+  }
+
+  // RNF0064: Data de entrada obrigatória
+  if (!dados.dataEntrada) {
+    alert("A data de entrada é obrigatória.");
+    return false;
+  }
+
+  return true;
+}
+
+function registrarEntradaEstoque(dados) {
+  // Adiciona ao histórico
+  const novaEntrada = {
+    id: historicoEntradas.length + 1,
+    ...dados,
+  };
+  historicoEntradas.unshift(novaEntrada);
+
+  // Atualiza estoque existente ou cria novo
+  let itemEstoque = buscarEstoquePorLivroId(dados.livroId);
+
+  if (itemEstoque) {
+    // RN005x: Se há valores diferentes, usar o maior valor de custo
+    if (dados.valorCusto > itemEstoque.valorCusto) {
+      const livro = buscarLivroPorId(dados.livroId);
+      itemEstoque.valorCusto = dados.valorCusto;
+      itemEstoque.valorVenda = calcularValorVenda(
+        dados.valorCusto,
+        livro.grupoPrecificacao.percentual
+      );
+    }
+    itemEstoque.quantidade += dados.quantidade;
+    itemEstoque.dataUltimaEntrada = dados.dataEntrada;
+    itemEstoque.fornecedor = dados.fornecedor;
+  } else {
+    // Novo item no estoque
+    estoqueMockado.push({
+      livroId: dados.livroId,
+      quantidade: dados.quantidade,
+      valorCusto: dados.valorCusto,
+      valorVenda: dados.valorVenda,
+      dataUltimaEntrada: dados.dataEntrada,
+      fornecedor: dados.fornecedor,
+    });
+  }
+}
+
+function carregarHistoricoEntradas() {
+  const tbody = document.querySelector("#tabelaHistoricoEntradas tbody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  historicoEntradas.slice(0, 10).forEach((entrada) => {
+    const livro = buscarLivroPorId(entrada.livroId);
+    const row = document.createElement("tr");
+    row.innerHTML = `
+            <td>${formatarData(entrada.dataEntrada)}</td>
+            <td>${livro ? livro.titulo : "N/A"}</td>
+            <td>${entrada.quantidade}</td>
+            <td>${formatarMoeda(entrada.valorCusto)}</td>
+            <td>${formatarMoeda(entrada.valorVenda)}</td>
+            <td>${entrada.fornecedor}</td>
+        `;
+    tbody.appendChild(row);
+  });
+}
+
+function limparFormulario() {
+  document.getElementById("formEntradaEstoque").reset();
+  preencherDataAtual("dataEntrada");
+  document.getElementById("valorVenda").value = "";
+}
+
+// ==============================
+// PÁGINA CONSULTAR ESTOQUE
+// ==============================
+
+let dadosFiltrados = [];
+
+function initConsultarEstoque() {
+  carregarTabelaEstoque();
+  configurarFiltros();
+}
+
+function carregarTabelaEstoque(filtros = {}) {
+  const tbody = document.querySelector("#tabelaEstoque tbody");
+  if (!tbody) return;
+
+  // Aplica filtros
+  dadosFiltrados = estoqueMockado.filter((item) => {
+    const livro = buscarLivroPorId(item.livroId);
+    if (!livro) return false;
+
+    if (
+      filtros.titulo &&
+      !livro.titulo.toLowerCase().includes(filtros.titulo.toLowerCase())
+    ) {
+      return false;
+    }
+
+    if (
+      filtros.autor &&
+      !livro.autor.toLowerCase().includes(filtros.autor.toLowerCase())
+    ) {
+      return false;
+    }
+
+    if (filtros.isbn && !livro.isbn.includes(filtros.isbn)) {
+      return false;
+    }
+
+    if (filtros.estoque) {
+      const status = determinarStatusEstoque(item.quantidade);
+      if (status !== filtros.estoque) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  // Paginação
+  const totalPaginas = Math.ceil(dadosFiltrados.length / itensPorPagina);
+  const inicio = (paginaAtual - 1) * itensPorPagina;
+  const fim = inicio + itensPorPagina;
+  const itensPagina = dadosFiltrados.slice(inicio, fim);
+
+  // Limpa tabela
+  tbody.innerHTML = "";
+
+  // Preenche tabela
+  itensPagina.forEach((item) => {
+    const livro = buscarLivroPorId(item.livroId);
+    const status = determinarStatusEstoque(item.quantidade);
+    const statusClass = `status-${status}`;
+    const statusText =
+      status === "disponivel"
+        ? "Disponível"
+        : status === "baixo"
+        ? "Baixo Estoque"
+        : "Sem Estoque";
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+            <td>${livro.titulo}</td>
+            <td>${livro.autor}</td>
+            <td>${livro.isbn}</td>
+            <td>${item.quantidade}</td>
+            <td>${formatarMoeda(item.valorCusto)}</td>
+            <td>${formatarMoeda(item.valorVenda)}</td>
+            <td>${livro.categoria}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>
+                <button class="btn btn-small btn-primary" onclick="mostrarDetalhes(${
+                  item.livroId
+                })">
+                    Detalhes
+                </button>
+            </td>
+        `;
+    tbody.appendChild(row);
+  });
+
+  // Atualiza informações de paginação
+  atualizarPaginacao(totalPaginas);
+}
+
+function configurarFiltros() {
+  const filtros = [
+    "filtroTitulo",
+    "filtroAutor",
+    "filtroISBN",
+    "filtroEstoque",
+  ];
+
+  filtros.forEach((filtroId) => {
+    const elemento = document.getElementById(filtroId);
+    if (elemento) {
+      elemento.addEventListener("input", aplicarFiltros);
+    }
+  });
+}
+
+function aplicarFiltros() {
+  const filtros = {
+    titulo: document.getElementById("filtroTitulo")?.value || "",
+    autor: document.getElementById("filtroAutor")?.value || "",
+    isbn: document.getElementById("filtroISBN")?.value || "",
+    estoque: document.getElementById("filtroEstoque")?.value || "",
+  };
+
+  paginaAtual = 1;
+  carregarTabelaEstoque(filtros);
+}
+
+function limparFiltros() {
+  document.getElementById("filtroTitulo").value = "";
+  document.getElementById("filtroAutor").value = "";
+  document.getElementById("filtroISBN").value = "";
+  document.getElementById("filtroEstoque").value = "";
+
+  paginaAtual = 1;
+  carregarTabelaEstoque();
+}
+
+function atualizarPaginacao(totalPaginas) {
+  const infoPagina = document.getElementById("infoPagina");
+  const btnAnterior = document.getElementById("btnAnterior");
+  const btnProximo = document.getElementById("btnProximo");
+
+  if (infoPagina) {
+    infoPagina.textContent = `Página ${paginaAtual} de ${totalPaginas}`;
+  }
+
+  if (btnAnterior) {
+    btnAnterior.disabled = paginaAtual === 1;
+  }
+
+  if (btnProximo) {
+    btnProximo.disabled = paginaAtual === totalPaginas || totalPaginas === 0;
+  }
+}
+
+function paginaAnterior() {
+  if (paginaAtual > 1) {
+    paginaAtual--;
+    aplicarFiltros();
+  }
+}
+
+function proximaPagina() {
+  const totalPaginas = Math.ceil(dadosFiltrados.length / itensPorPagina);
+  if (paginaAtual < totalPaginas) {
+    paginaAtual++;
+    aplicarFiltros();
+  }
+}
+
+function mostrarDetalhes(livroId) {
+  const item = buscarEstoquePorLivroId(livroId);
+  const livro = buscarLivroPorId(livroId);
+
+  if (!item || !livro) return;
+
+  const status = determinarStatusEstoque(item.quantidade);
+  const statusText =
+    status === "disponivel"
+      ? "Disponível"
+      : status === "baixo"
+      ? "Baixo Estoque"
+      : "Sem Estoque";
+
+  const conteudo = `
+        <div class="detalhes-item">
+            <h4>${livro.titulo}</h4>
+            <p><strong>Autor:</strong> ${livro.autor}</p>
+            <p><strong>ISBN:</strong> ${livro.isbn}</p>
+            <p><strong>Categoria:</strong> ${livro.categoria}</p>
+            <p><strong>Quantidade:</strong> ${item.quantidade}</p>
+            <p><strong>Valor de Custo:</strong> ${formatarMoeda(
+              item.valorCusto
+            )}</p>
+            <p><strong>Valor de Venda:</strong> ${formatarMoeda(
+              item.valorVenda
+            )}</p>
+            <p><strong>Status:</strong> ${statusText}</p>
+            <p><strong>Último Fornecedor:</strong> ${item.fornecedor}</p>
+            <p><strong>Data Última Entrada:</strong> ${formatarData(
+              item.dataUltimaEntrada
+            )}</p>
+        </div>
+    `;
+
+  document.getElementById("conteudoDetalhes").innerHTML = conteudo;
+  document.getElementById("modalDetalhes").style.display = "block";
+}
+
+function fecharModal() {
+  document.getElementById("modalDetalhes").style.display = "none";
+}
+
+// ==============================
+// PÁGINA REENTRADA DE ESTOQUE
+// ==============================
+
+function initReentradaEstoque() {
+  preencherSelectLivros("livroReentrada");
+  preencherDataAtual("dataReentrada");
+  carregarHistoricoReentradas();
+
+  document
+    .getElementById("formReentradaEstoque")
+    .addEventListener("submit", processarReentradaEstoque);
+}
+
+function atualizarCamposOperacao() {
+  const tipoOperacao = document.getElementById("tipoOperacao").value;
+  const numeroVenda = document.getElementById("numeroVenda");
+
+  if (tipoOperacao === "troca" || tipoOperacao === "devolucao") {
+    numeroVenda.required = true;
+    numeroVenda.placeholder = "Número da venda original";
+  } else {
+    numeroVenda.required = false;
+    numeroVenda.placeholder = "Opcional";
+  }
+}
+
+function processarReentradaEstoque(event) {
+  event.preventDefault();
+
+  const formData = new FormData(event.target);
+  const dados = {
+    tipoOperacao: formData.get("tipoOperacao"),
+    numeroVenda: formData.get("numeroVenda"),
+    livroId: parseInt(formData.get("livroReentrada")),
+    quantidade: parseInt(formData.get("quantidadeReentrada")),
+    dataReentrada: formData.get("dataReentrada"),
+    motivo: formData.get("motivoReentrada"),
+    observacoes: formData.get("observacoes"),
+  };
+
+  if (!validarReentradaEstoque(dados)) {
+    return;
+  }
+
+  // Registra reentrada
+  registrarReentradaEstoque(dados);
+
+  // Limpa formulário
+  event.target.reset();
+  preencherDataAtual("dataReentrada");
+
+  // Atualiza histórico
+  carregarHistoricoReentradas();
+
+  alert("Reentrada processada com sucesso!");
+}
+
+function validarReentradaEstoque(dados) {
+  if (dados.quantidade <= 0) {
+    alert("A quantidade deve ser maior que zero.");
+    return false;
+  }
+
+  if (!dados.dataReentrada) {
+    alert("A data de reentrada é obrigatória.");
+    return false;
+  }
+
+  if (
+    (dados.tipoOperacao === "troca" || dados.tipoOperacao === "devolucao") &&
+    !dados.numeroVenda
+  ) {
+    alert("Para trocas e devoluções, o número da venda é obrigatório.");
+    return false;
+  }
+
+  return true;
+}
+
+function registrarReentradaEstoque(dados) {
+  // Adiciona ao histórico
+  const novaReentrada = {
+    id: historicoReentradas.length + 1,
+    ...dados,
+  };
+  historicoReentradas.unshift(novaReentrada);
+
+  // Atualiza estoque - RF0054: Realizar reentrada em estoque
+  let itemEstoque = buscarEstoquePorLivroId(dados.livroId);
+
+  if (itemEstoque) {
+    itemEstoque.quantidade += dados.quantidade;
+  } else {
+    // Se não existe no estoque, cria novo item com custo zerado
+    estoqueMockado.push({
+      livroId: dados.livroId,
+      quantidade: dados.quantidade,
+      valorCusto: 0,
+      valorVenda: 0,
+      dataUltimaEntrada: dados.dataReentrada,
+      fornecedor: "Reentrada",
+    });
+  }
+}
+
+function carregarHistoricoReentradas() {
+  const tbody = document.querySelector("#tabelaHistoricoReentradas tbody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  historicoReentradas.slice(0, 10).forEach((reentrada) => {
+    const livro = buscarLivroPorId(reentrada.livroId);
+    const tipoTexto =
+      reentrada.tipo === "troca"
+        ? "Troca"
+        : reentrada.tipo === "devolucao"
+        ? "Devolução"
+        : "Ajuste";
+    const motivoTexto = reentrada.motivo
+      .replace("_", " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+            <td>${formatarData(reentrada.dataReentrada)}</td>
+            <td>${livro ? livro.titulo : "N/A"}</td>
+            <td>${reentrada.quantidade}</td>
+            <td>${tipoTexto}</td>
+            <td>${motivoTexto}</td>
+            <td>${reentrada.observacoes || "-"}</td>
+        `;
+    tbody.appendChild(row);
+  });
+}
+
+function limparFormularioReentrada() {
+  document.getElementById("formReentradaEstoque").reset();
+  preencherDataAtual("dataReentrada");
+}
+
+// ==============================
+// FUNÇÕES GLOBAIS
+// ==============================
+
+// Fecha modal ao clicar fora
+window.onclick = function (event) {
+  const modal = document.getElementById("modalDetalhes");
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+};
+
+// ==============================
+// DADOS MOCKADOS PARA ANÁLISE DE VENDAS
+// ==============================
+
+const dadosVendasMock = {
+  produtos: {
+    livro1: { nome: "Dom Casmurro", categoria: "classicos", preco: 25.9 },
+    livro2: { nome: "O Alquimista", categoria: "autoajuda", preco: 32.9 },
+    livro3: { nome: "1984", categoria: "ficcao", preco: 28.5 },
+    livro4: { nome: "O Pequeno Príncipe", categoria: "ficcao", preco: 22.9 },
+    livro5: {
+      nome: "Harry Potter - Pedra Filosofal",
+      categoria: "fantasia",
+      preco: 45.9,
+    },
+  },
+
+  categorias: {
+    ficcao: "Ficção",
+    romance: "Romance",
+    fantasia: "Fantasia",
+    autoajuda: "Autoajuda",
+    classicos: "Clássicos",
+  },
+
+  // Dados de vendas por data
+  vendasPorData: {
+    "2024-01-15": { livro1: 5, livro2: 3, livro3: 7, livro4: 2, livro5: 4 },
+    "2024-01-20": { livro1: 3, livro2: 8, livro3: 4, livro4: 6, livro5: 2 },
+    "2024-01-25": { livro1: 7, livro2: 2, livro3: 9, livro4: 3, livro5: 8 },
+    "2024-02-01": { livro1: 4, livro2: 6, livro3: 2, livro4: 8, livro5: 5 },
+    "2024-02-05": { livro1: 6, livro2: 4, livro3: 8, livro4: 1, livro5: 7 },
+    "2024-02-10": { livro1: 2, livro2: 9, livro3: 3, livro4: 5, livro5: 6 },
+    "2024-02-15": { livro1: 8, livro2: 1, livro3: 6, livro4: 4, livro5: 3 },
+    "2024-02-20": { livro1: 5, livro2: 7, livro3: 4, livro4: 9, livro5: 2 },
+  },
+};
+
+// ==============================
+// FUNÇÕES PARA ANÁLISE DE VENDAS
+// ==============================
+
+function inicializarAnaliseVendas() {
+  // Configurar datas padrão
+  const hoje = new Date();
+  const trintaDiasAtras = new Date();
+  trintaDiasAtras.setDate(hoje.getDate() - 30);
+
+  document.getElementById("dataInicio").value = trintaDiasAtras
+    .toISOString()
+    .split("T")[0];
+  document.getElementById("dataFim").value = hoje.toISOString().split("T")[0];
+
+  // Event listeners
+  document
+    .getElementById("tipoAnalise")
+    .addEventListener("change", alternarTipoAnalise);
+  document
+    .getElementById("btnAnalisar")
+    .addEventListener("click", analisarVendas);
+
+  // Selecionar alguns itens por padrão
+  document.getElementById("produtos").selectedIndex = 0;
+}
+
+function alternarTipoAnalise() {
+  const tipoAnalise = document.getElementById("tipoAnalise").value;
+  const produtosFiltro = document.getElementById("produtosFiltro");
+  const categoriasFiltro = document.getElementById("categoriasFiltro");
+
+  if (tipoAnalise === "produtos") {
+    produtosFiltro.style.display = "flex";
+    categoriasFiltro.style.display = "none";
+  } else {
+    produtosFiltro.style.display = "none";
+    categoriasFiltro.style.display = "flex";
+  }
+}
+
+function analisarVendas() {
+  const dataInicio = new Date(document.getElementById("dataInicio").value);
+  const dataFim = new Date(document.getElementById("dataFim").value);
+  const tipoAnalise = document.getElementById("tipoAnalise").value;
+
+  // Validar datas
+  if (dataInicio > dataFim) {
+    alert("A data de início deve ser anterior à data de fim!");
+    return;
+  }
+
+  // Obter itens selecionados
+  let itensSelecionados = [];
+  if (tipoAnalise === "produtos") {
+    const produtosSelecionados = Array.from(
+      document.getElementById("produtos").selectedOptions
+    );
+    itensSelecionados = produtosSelecionados.map((option) => option.value);
+  } else {
+    const categoriasSelecionadas = Array.from(
+      document.getElementById("categorias").selectedOptions
+    );
+    itensSelecionados = categoriasSelecionadas.map((option) => option.value);
+  }
+
+  if (itensSelecionados.length === 0) {
+    alert("Selecione pelo menos um item para análise!");
+    return;
+  }
+
+  // Processar dados
+  const dadosProcessados = processarDadosVendas(
+    dataInicio,
+    dataFim,
+    tipoAnalise,
+    itensSelecionados
+  );
+
+  // Exibir resultados
+  exibirResultados(dadosProcessados, dataInicio, dataFim);
+
+  // Mostrar container de resultados
+  document.getElementById("resultadosContainer").style.display = "block";
+}
+
+function processarDadosVendas(
+  dataInicio,
+  dataFim,
+  tipoAnalise,
+  itensSelecionados
+) {
+  let totalVendas = 0;
+  let quantidadeTotal = 0;
+  let dadosGrafico = [];
+  let detalhesVendas = [];
+
+  // Filtrar dados por período
+  const datasOrdenadas = Object.keys(dadosVendasMock.vendasPorData)
+    .filter((data) => {
+      const dataVenda = new Date(data);
+      return dataVenda >= dataInicio && dataVenda <= dataFim;
+    })
+    .sort();
+
+  if (tipoAnalise === "produtos") {
+    // Análise por produtos
+    itensSelecionados.forEach((produtoId) => {
+      const produto = dadosVendasMock.produtos[produtoId];
+      let quantidadeProduto = 0;
+      let valorProduto = 0;
+      let dadosProdutoGrafico = { nome: produto.nome, dados: [] };
+
+      datasOrdenadas.forEach((data) => {
+        const qtdVendida = dadosVendasMock.vendasPorData[data][produtoId] || 0;
+        quantidadeProduto += qtdVendida;
+        valorProduto += qtdVendida * produto.preco;
+
+        dadosProdutoGrafico.dados.push({
+          data: data,
+          quantidade: qtdVendida,
+        });
+      });
+
+      totalVendas += valorProduto;
+      quantidadeTotal += quantidadeProduto;
+      dadosGrafico.push(dadosProdutoGrafico);
+
+      detalhesVendas.push({
+        item: produto.nome,
+        categoria: dadosVendasMock.categorias[produto.categoria],
+        quantidade: quantidadeProduto,
+        valor: valorProduto,
+      });
+    });
+  } else {
+    // Análise por categorias
+    itensSelecionados.forEach((categoriaId) => {
+      const nomeCategoria = dadosVendasMock.categorias[categoriaId];
+      let quantidadeCategoria = 0;
+      let valorCategoria = 0;
+      let dadosCategoriaGrafico = { nome: nomeCategoria, dados: [] };
+
+      datasOrdenadas.forEach((data) => {
+        let qtdDataCategoria = 0;
+
+        // Somar vendas de todos os produtos da categoria
+        Object.keys(dadosVendasMock.produtos).forEach((produtoId) => {
+          const produto = dadosVendasMock.produtos[produtoId];
+          if (produto.categoria === categoriaId) {
+            const qtdVendida =
+              dadosVendasMock.vendasPorData[data][produtoId] || 0;
+            quantidadeCategoria += qtdVendida;
+            valorCategoria += qtdVendida * produto.preco;
+            qtdDataCategoria += qtdVendida;
+          }
+        });
+
+        dadosCategoriaGrafico.dados.push({
+          data: data,
+          quantidade: qtdDataCategoria,
+        });
+      });
+
+      totalVendas += valorCategoria;
+      quantidadeTotal += quantidadeCategoria;
+      dadosGrafico.push(dadosCategoriaGrafico);
+
+      detalhesVendas.push({
+        item: nomeCategoria,
+        categoria: "Categoria",
+        quantidade: quantidadeCategoria,
+        valor: valorCategoria,
+      });
+    });
+  }
+
+  return {
+    totalVendas,
+    quantidadeTotal,
+    dadosGrafico,
+    detalhesVendas,
+    datasOrdenadas,
+  };
+}
+
+function exibirResultados(dados, dataInicio, dataFim) {
+  // Atualizar resumo
+  document.getElementById(
+    "totalVendas"
+  ).textContent = `R$ ${dados.totalVendas.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+  })}`;
+
+  document.getElementById(
+    "quantidadeVendida"
+  ).textContent = `${dados.quantidadeTotal} livros`;
+
+  document.getElementById(
+    "periodoAnalise"
+  ).textContent = `${dataInicio.toLocaleDateString(
+    "pt-BR"
+  )} a ${dataFim.toLocaleDateString("pt-BR")}`;
+
+  // Gerar gráfico
+  gerarGraficoLinhas(dados.dadosGrafico, dados.datasOrdenadas);
+
+  // Preencher tabela de detalhes
+  preencherTabelaDetalhes(dados.detalhesVendas, dataInicio, dataFim);
+}
+
+function gerarGraficoLinhas(dadosGrafico, datasOrdenadas) {
+  const canvas = document.getElementById("graficoVendas");
+  const ctx = canvas.getContext("2d");
+
+  // Limpar canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const width = canvas.width;
+  const height = canvas.height;
+  const padding = 60;
+  const graphWidth = width - 2 * padding;
+  const graphHeight = height - 2 * padding;
+
+  // Configurar escalas
+  const maxQuantidade = Math.max(
+    ...dadosGrafico.flatMap((serie) =>
+      serie.dados.map((ponto) => ponto.quantidade)
+    )
+  );
+
+  const scaleX = graphWidth / (datasOrdenadas.length - 1 || 1);
+  const scaleY = graphHeight / (maxQuantidade || 1);
+
+  // Cores para as linhas
+  const cores = ["#2196f3", "#4caf50", "#ff9800", "#e91e63", "#9c27b0"];
+
+  // Desenhar eixos
+  ctx.strokeStyle = "#666";
+  ctx.lineWidth = 1;
+
+  // Eixo X
+  ctx.beginPath();
+  ctx.moveTo(padding, height - padding);
+  ctx.lineTo(width - padding, height - padding);
+  ctx.stroke();
+
+  // Eixo Y
+  ctx.beginPath();
+  ctx.moveTo(padding, padding);
+  ctx.lineTo(padding, height - padding);
+  ctx.stroke();
+
+  // Labels do eixo X (datas)
+  ctx.fillStyle = "#666";
+  ctx.font = "12px Arial";
+  ctx.textAlign = "center";
+
+  datasOrdenadas.forEach((data, index) => {
+    const x = padding + index * scaleX;
+    const dataFormatada = new Date(data).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+    });
+    ctx.fillText(dataFormatada, x, height - padding + 20);
+  });
+
+  // Labels do eixo Y
+  ctx.textAlign = "right";
+  for (let i = 0; i <= 5; i++) {
+    const y = height - padding - (i * graphHeight) / 5;
+    const valor = Math.round((i * maxQuantidade) / 5);
+    ctx.fillText(valor.toString(), padding - 10, y + 5);
+  }
+
+  // Desenhar linhas dos dados
+  dadosGrafico.forEach((serie, serieIndex) => {
+    ctx.strokeStyle = cores[serieIndex % cores.length];
+    ctx.fillStyle = cores[serieIndex % cores.length];
+    ctx.lineWidth = 3;
+
+    // Desenhar linha
+    ctx.beginPath();
+    serie.dados.forEach((ponto, index) => {
+      const x = padding + index * scaleX;
+      const y = height - padding - ponto.quantidade * scaleY;
+
+      if (index === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+    ctx.stroke();
+
+    // Desenhar pontos
+    serie.dados.forEach((ponto, index) => {
+      const x = padding + index * scaleX;
+      const y = height - padding - ponto.quantidade * scaleY;
+
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+  });
+
+  // Legenda
+  ctx.font = "14px Arial";
+  ctx.textAlign = "left";
+  dadosGrafico.forEach((serie, index) => {
+    const y = 30 + index * 20;
+    ctx.fillStyle = cores[index % cores.length];
+    ctx.fillRect(width - 200, y - 10, 15, 15);
+    ctx.fillStyle = "#333";
+    ctx.fillText(serie.nome, width - 180, y + 2);
+  });
+}
+
+function preencherTabelaDetalhes(detalhesVendas, dataInicio, dataFim) {
+  const corpoTabela = document.getElementById("corpoTabelaDetalhes");
+  corpoTabela.innerHTML = "";
+
+  const periodo = `${dataInicio.toLocaleDateString(
+    "pt-BR"
+  )} - ${dataFim.toLocaleDateString("pt-BR")}`;
+
+  detalhesVendas.forEach((detalhe) => {
+    const linha = document.createElement("tr");
+    linha.innerHTML = `
+            <td>${detalhe.item}</td>
+            <td>${detalhe.categoria}</td>
+            <td>${detalhe.quantidade}</td>
+            <td>R$ ${detalhe.valor.toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+            })}</td>
+            <td>${periodo}</td>
+        `;
+    corpoTabela.appendChild(linha);
+  });
+}
+
+// ==============================
+// INICIALIZAÇÃO DA PÁGINA
+// ==============================
+
+// Verificar se estamos na página de análise de vendas
+document.addEventListener("DOMContentLoaded", function () {
+  if (document.getElementById("btnAnalisar")) {
+    inicializarAnaliseVendas();
+  }
+});
+
+// ============================== DADOS MOCKADOS IA ==============================
+
+const livrosMockadosIA = [
+  {
+    id: 1,
+    titulo: "Dune",
+    autor: "Frank Herbert",
+    genero: "ficcao",
+    confianca: "alta",
+    confiancaValor: 94,
+    motivo: "Baseado no seu interesse por ficção científica e livros épicos",
+    preco: 45.9,
+    avaliacao: 4.7,
+    paginas: 688,
+  },
+  {
+    id: 2,
+    titulo: "1984",
+    autor: "George Orwell",
+    genero: "ficcao",
+    confianca: "alta",
+    confiancaValor: 92,
+    motivo: "Você gostou de livros distópicos e reflexivos",
+    preco: 32.5,
+    avaliacao: 4.6,
+    paginas: 416,
+  },
+  {
+    id: 3,
+    titulo: "O Nome do Vento",
+    autor: "Patrick Rothfuss",
+    genero: "fantasia",
+    confianca: "media",
+    confiancaValor: 78,
+    motivo: "Similar aos livros de fantasia que você avaliou positivamente",
+    preco: 52.9,
+    avaliacao: 4.8,
+    paginas: 662,
+  },
+  {
+    id: 4,
+    titulo: "Orgulho e Preconceito",
+    autor: "Jane Austen",
+    genero: "romance",
+    confianca: "media",
+    confiancaValor: 73,
+    motivo: "Baseado no seu histórico com romances clássicos",
+    preco: 28.9,
+    avaliacao: 4.4,
+    paginas: 432,
+  },
+  {
+    id: 5,
+    titulo: "O Código Da Vinci",
+    autor: "Dan Brown",
+    genero: "misterio",
+    confianca: "baixa",
+    confiancaValor: 65,
+    motivo: "Experimentando novos gêneros baseado em usuários similares",
+    preco: 38.5,
+    avaliacao: 4.1,
+    paginas: 590,
+  },
+  {
+    id: 6,
+    titulo: "Steve Jobs",
+    autor: "Walter Isaacson",
+    genero: "biografia",
+    confianca: "media",
+    confiancaValor: 81,
+    motivo: "Você demonstrou interesse em biografias de inovadores",
+    preco: 64.9,
+    avaliacao: 4.5,
+    paginas: 656,
+  },
+];
+
+const historicoCompras = [
+  {
+    id: 1,
+    titulo: "O Senhor dos Anéis",
+    autor: "J.R.R. Tolkien",
+    dataCompra: "2024-08-15",
+    preco: 89.9,
+    avaliacao: 5,
+    genero: "fantasia",
+  },
+  {
+    id: 2,
+    titulo: "Neuromancer",
+    autor: "William Gibson",
+    dataCompra: "2024-08-10",
+    preco: 42.5,
+    avaliacao: 4,
+    genero: "ficcao",
+  },
+  {
+    id: 3,
+    titulo: "A Guerra dos Tronos",
+    autor: "George R.R. Martin",
+    dataCompra: "2024-07-28",
+    preco: 55.9,
+    avaliacao: 5,
+    genero: "fantasia",
+  },
+  {
+    id: 4,
+    titulo: "Fundação",
+    autor: "Isaac Asimov",
+    dataCompra: "2024-07-15",
+    preco: 38.9,
+    avaliacao: 4,
+    genero: "ficcao",
+  },
+  {
+    id: 5,
+    titulo: "O Hobbit",
+    autor: "J.R.R. Tolkien",
+    dataCompra: "2024-07-02",
+    preco: 34.9,
+    avaliacao: 5,
+    genero: "fantasia",
+  },
+];
+
+let conversaChat = [
+  {
+    tipo: "bot",
+    mensagem:
+      "Olá! Sou seu assistente de livros com IA. Como posso ajudá-lo hoje?",
+    timestamp: new Date(),
+  },
+  {
+    tipo: "bot",
+    mensagem:
+      "Posso sugerir livros baseados em seus gostos, ajudar a encontrar algo específico, ou responder dúvidas sobre nosso catálogo!",
+    timestamp: new Date(),
+  },
+];
+
+// ============================== FUNÇÕES GERAIS ==============================
+
+function formatarData(data) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return new Date(data).toLocaleDateString("pt-BR", options);
+}
+
+function formatarPreco(preco) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(preco);
+}
+
+function gerarEstrelas(avaliacao) {
+  const estrelasCompletas = Math.floor(avaliacao);
+  const temMeiaEstrela = avaliacao % 1 >= 0.5;
+  let html = "";
+
+  for (let i = 0; i < estrelasCompletas; i++) {
+    html += "⭐";
+  }
+  if (temMeiaEstrela) {
+    html += "⭐";
+  }
+
+  return html;
+}
+
+// ============================== FUNÇÕES DE RECOMENDAÇÕES ==============================
+
+function carregarRecomendacoes() {
+  const container = document.getElementById("recomendacoes-lista");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  livrosMockadosIA.forEach((livro) => {
+    const card = criarCardRecomendacao(livro);
+    container.appendChild(card);
+  });
+}
+
+function criarCardRecomendacao(livro) {
+  const card = document.createElement("div");
+  card.className = "recomendacao-card";
+  card.setAttribute("data-genero", livro.genero);
+  card.setAttribute("data-confianca", livro.confianca);
+
+  card.innerHTML = `
+        <div class="recomendacao-header">
+            <div class="livro-info">
+                <h4>${livro.titulo}</h4>
+                <p>por ${livro.autor}</p>
+            </div>
+            <span class="confianca-badge confianca-${livro.confianca}">
+                ${livro.confiancaValor}%
+            </span>
+        </div>
+        
+        <div class="recomendacao-motivo">
+            💡 ${livro.motivo}
+        </div>
+        
+        <div class="livro-detalhes">
+            <p><strong>Gênero:</strong> ${
+              livro.genero.charAt(0).toUpperCase() + livro.genero.slice(1)
+            }</p>
+            <p><strong>Páginas:</strong> ${livro.paginas}</p>
+            <p><strong>Avaliação:</strong> ${gerarEstrelas(livro.avaliacao)} ${
+    livro.avaliacao
+  }/5</p>
+            <p><strong>Preço:</strong> ${formatarPreco(livro.preco)}</p>
+        </div>
+        
+        <div class="recomendacao-actions">
+            <button class="btn-action btn-like" onclick="avaliarRecomendacao(${
+              livro.id
+            }, 'like')">
+                👍 Gostei
+            </button>
+            <button class="btn-action btn-dislike" onclick="avaliarRecomendacao(${
+              livro.id
+            }, 'dislike')">
+                👎 Não gostei
+            </button>
+            <button class="btn-action btn-info" onclick="verDetalhes(${
+              livro.id
+            })">
+                📖 Detalhes
+            </button>
+        </div>
+    `;
+
+  return card;
+}
+
+function gerarNovasRecomendacoes() {
+  const button = document.querySelector(".page-header button");
+  button.textContent = "🔄 Gerando...";
+  button.disabled = true;
+
+  setTimeout(() => {
+    // Simular nova geração embaralhando a lista
+    livrosMockadosIA.sort(() => Math.random() - 0.5);
+    carregarRecomendacoes();
+
+    button.textContent = "✨ Gerar Novas Recomendações";
+    button.disabled = false;
+
+    mostrarNotificacao(
+      "Novas recomendações geradas com base no seu perfil!",
+      "sucesso"
+    );
+  }, 2000);
+}
+
+function filtrarRecomendacoes() {
+  const generoFiltro = document.getElementById("genero-filter").value;
+  const confiancaFiltro = document.getElementById("confianca-filter").value;
+
+  const cards = document.querySelectorAll(".recomendacao-card");
+
+  cards.forEach((card) => {
+    const genero = card.getAttribute("data-genero");
+    const confianca = card.getAttribute("data-confianca");
+
+    let mostrar = true;
+
+    if (generoFiltro && genero !== generoFiltro) {
+      mostrar = false;
+    }
+
+    if (confiancaFiltro && confianca !== confiancaFiltro) {
+      mostrar = false;
+    }
+
+    card.style.display = mostrar ? "block" : "none";
+  });
+}
+
+function avaliarRecomendacao(id, tipo) {
+  const livro = livrosMockadosIA.find((l) => l.id === id);
+  const acao = tipo === "like" ? "curtiu" : "não curtiu";
+
+  mostrarNotificacao(
+    `Você ${acao} "${livro.titulo}". A IA utilizará este feedback!`,
+    "info"
+  );
+
+  // Simular atualização do modelo
+  setTimeout(() => {
+    mostrarNotificacao("Modelo de IA atualizado com seu feedback!", "sucesso");
+  }, 1000);
+}
+
+function verDetalhes(id) {
+  const livro = livrosMockadosIA.find((l) => l.id === id);
+  alert(
+    `📖 ${livro.titulo}\n\n👤 Autor: ${livro.autor}\n📊 Avaliação: ${
+      livro.avaliacao
+    }/5\n📄 Páginas: ${livro.paginas}\n💰 Preço: ${formatarPreco(
+      livro.preco
+    )}\n\n💡 Por que recomendamos:\n${livro.motivo}`
+  );
+}
+
+function enviarFeedback() {
+  const textarea = document.getElementById("feedback-text");
+  const feedback = textarea.value.trim();
+
+  if (!feedback) {
+    mostrarNotificacao(
+      "Por favor, escreva seu feedback antes de enviar.",
+      "erro"
+    );
+    return;
+  }
+
+  textarea.value = "";
+  mostrarNotificacao(
+    "Feedback enviado! Obrigado por nos ajudar a melhorar.",
+    "sucesso"
+  );
+
+  // Simular processamento do feedback
+  setTimeout(() => {
+    mostrarNotificacao("Seu feedback foi processado pela IA!", "info");
+  }, 2000);
+}
+
+// ============================== FUNÇÕES DO CHATBOT ==============================
+
+function enviarMensagem() {
+  const input = document.getElementById("chat-input");
+  const mensagem = input.value.trim();
+
+  if (!mensagem) return;
+
+  // Adicionar mensagem do usuário
+  adicionarMensagemChat("user", mensagem);
+  input.value = "";
+
+  // Simular resposta da IA
+  setTimeout(() => {
+    const resposta = gerarRespostaIA(mensagem);
+    adicionarMensagemChat("bot", resposta);
+  }, 1000 + Math.random() * 2000);
+}
+
+function adicionarMensagemChat(tipo, mensagem) {
+  const chatWindow = document.getElementById("chat-window");
+  if (!chatWindow) return;
+
+  const messageDiv = document.createElement("div");
+  messageDiv.className = `message ${tipo}-message`;
+
+  const avatar = tipo === "bot" ? "🤖" : "👤";
+  const timestamp = new Date().toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  messageDiv.innerHTML = `
+        <div class="message-avatar">${avatar}</div>
+        <div class="message-content">
+            <p>${mensagem}</p>
+            <span class="message-time">${timestamp}</span>
+        </div>
+    `;
+
+  chatWindow.appendChild(messageDiv);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
+  // Adicionar ao histórico
+  conversaChat.push({
+    tipo: tipo,
+    mensagem: mensagem,
+    timestamp: new Date(),
+  });
+}
+
+function gerarRespostaIA(mensagem) {
+  const mensagemLower = mensagem.toLowerCase();
+
+  // Respostas baseadas em palavras-chave
+  if (
+    mensagemLower.includes("ficção científica") ||
+    mensagemLower.includes("sci-fi")
+  ) {
+    return 'Ótima escolha! Para ficção científica, recomendo "Dune" de Frank Herbert e "Neuromancer" de William Gibson. Baseado no seu perfil, você tem 94% de chance de gostar de Dune! 🚀';
+  }
+
+  if (mensagemLower.includes("romance")) {
+    return 'Para romance, sugiro "Orgulho e Preconceito" de Jane Austen - um clássico atemporal! Também temos "Me Chame Pelo Seu Nome" que está bem avaliado. Que tipo de romance você prefere? 💕';
+  }
+
+  if (
+    mensagemLower.includes("fantasia") ||
+    mensagemLower.includes("harry potter")
+  ) {
+    return 'Se você gostou de Harry Potter, vai adorar "O Nome do Vento" de Patrick Rothfuss e "A Guerra dos Tronos" de George R.R. Martin. Ambos têm mundos ricos e personagens cativantes! ⚡';
+  }
+
+  if (mensagemLower.includes("biografia")) {
+    return 'Biografias inspiradoras são ótimas! Recomendo "Steve Jobs" de Walter Isaacson e "Becoming" de Michelle Obama. Que tipo de personalidade te interessa mais? 📖';
+  }
+
+  if (mensagemLower.includes("preço") || mensagemLower.includes("barato")) {
+    return 'Entendo! Temos ótimas opções com bom custo-benefício. "1984" por R$ 32,50 e "O Hobbit" por R$ 34,90 são excelentes escolhas! 💰';
+  }
+
+  if (mensagemLower.includes("avaliação") || mensagemLower.includes("nota")) {
+    return 'Nossos livros mais bem avaliados são "O Nome do Vento" (4.8⭐) e "Dune" (4.7⭐). Ambos têm excelente feedback dos leitores! 📊';
+  }
+
+  // Respostas genéricas
+  const respostasGenericas = [
+    "Interessante! Com base no seu histórico, posso sugerir alguns livros que combinam com seus gostos. Que gênero você está procurando no momento?",
+    "Ótima pergunta! Nossa IA analisou seus padrões e tem algumas sugestões personalizadas. Quer ver as recomendações mais recentes?",
+    "Posso ajudar com isso! Baseado nas suas preferências anteriores, tenho algumas opções que você pode gostar. Prefere algo específico?",
+    "Entendi seu interesse! Nossa biblioteca tem mais de 50.000 títulos. Posso filtrar por gênero, autor ou tema. O que prefere?",
+  ];
+
+  return respostasGenericas[
+    Math.floor(Math.random() * respostasGenericas.length)
+  ];
+}
+
+function enviarSugestao(texto) {
+  const input = document.getElementById("chat-input");
+  input.value = texto;
+  enviarMensagem();
+}
+
+function verificarEnter(event) {
+  if (event.key === "Enter") {
+    enviarMensagem();
+  }
+}
+
+function limparChat() {
+  const chatWindow = document.getElementById("chat-window");
+  if (!chatWindow) return;
+
+  if (confirm("Deseja limpar toda a conversa?")) {
+    chatWindow.innerHTML = `
+            <div class="message bot-message">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <p>Conversa limpa! Como posso ajudá-lo hoje?</p>
+                    <span class="message-time">${new Date().toLocaleTimeString(
+                      "pt-BR",
+                      { hour: "2-digit", minute: "2-digit" }
+                    )}</span>
+                </div>
+            </div>
+        `;
+
+    conversaChat = [
+      {
+        tipo: "bot",
+        mensagem: "Conversa limpa! Como posso ajudá-lo hoje?",
+        timestamp: new Date(),
+      },
+    ];
+  }
+}
+
+function exportarConversa() {
+  let texto = "CONVERSA COM ASSISTENTE IA - SISTEMA DE LIVROS\n";
+  texto += "=" + "=".repeat(50) + "\n\n";
+
+  conversaChat.forEach((msg) => {
+    const tipo = msg.tipo === "bot" ? "ASSISTENTE" : "VOCÊ";
+    const hora = msg.timestamp.toLocaleTimeString("pt-BR");
+    texto += `[${hora}] ${tipo}: ${msg.mensagem}\n\n`;
+  });
+
+  const elemento = document.createElement("a");
+  elemento.setAttribute(
+    "href",
+    "data:text/plain;charset=utf-8," + encodeURIComponent(texto)
+  );
+  elemento.setAttribute(
+    "download",
+    `conversa_${new Date().toISOString().split("T")[0]}.txt`
+  );
+  elemento.style.display = "none";
+  document.body.appendChild(elemento);
+  elemento.click();
+  document.body.removeChild(elemento);
+
+  mostrarNotificacao("Conversa exportada com sucesso!", "sucesso");
+}
+
+function avaliarAssistente() {
+  const avaliacao = prompt(
+    "Como você avalia nosso assistente IA?\n\n1 - Muito ruim\n2 - Ruim\n3 - Regular\n4 - Bom\n5 - Excelente\n\nDigite um número de 1 a 5:"
+  );
+
+  if (avaliacao >= 1 && avaliacao <= 5) {
+    mostrarNotificacao(`Obrigado pela avaliação: ${avaliacao}⭐`, "sucesso");
+  }
+}
+
+// ============================== FUNÇÕES DE HISTÓRICO E PREFERÊNCIAS ==============================
+
+function mostrarTab(tabName) {
+  // Remover classe active de todas as tabs
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.classList.remove("active");
+  });
+  document.querySelectorAll(".tab-content").forEach((content) => {
+    content.classList.remove("active");
+  });
+
+  // Adicionar classe active na tab clicada
+  event.target.classList.add("active");
+  document.getElementById(tabName + "-tab").classList.add("active");
+
+  // Carregar conteúdo específico da tab
+  if (tabName === "historico") {
+    carregarHistorico();
+  }
+}
+
+function carregarHistorico() {
+  const container = document.getElementById("historico-compras");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  historicoCompras.forEach((item) => {
+    const div = document.createElement("div");
+    div.className = "historico-item";
+
+    div.innerHTML = `
+            <div class="livro-historico">
+                <h4>${item.titulo}</h4>
+                <p>por ${item.autor} • ${
+      item.genero.charAt(0).toUpperCase() + item.genero.slice(1)
+    }</p>
+            </div>
+            <div class="historico-meta">
+                <div class="data-compra">${formatarData(item.dataCompra)}</div>
+                <div class="avaliacao">${gerarEstrelas(item.avaliacao)}</div>
+                <div class="preco">${formatarPreco(item.preco)}</div>
+            </div>
+        `;
+
+    container.appendChild(div);
+  });
+}
+
+function filtrarHistorico() {
+  const periodo = document.getElementById("periodo-filter").value;
+  const hoje = new Date();
+
+  const itens = document.querySelectorAll(".historico-item");
+
+  itens.forEach((item) => {
+    const dataTexto = item.querySelector(".data-compra").textContent;
+    // Para simplificar, vamos mostrar todos os itens
+    item.style.display = "flex";
+  });
+
+  mostrarNotificacao(
+    `Filtro de ${periodo} dias aplicado ao histórico.`,
+    "info"
+  );
+}
+
+function salvarPreferencias() {
+  const generos = [];
+  document
+    .querySelectorAll(".checkbox-grid input:checked")
+    .forEach((checkbox) => {
+      generos.push(checkbox.value);
+    });
+
+  const tamanho = document.getElementById("tamanho-livro").value;
+  const frequencia = document.getElementById("frequencia-rec").value;
+  const orcamento = document.getElementById("orcamento").value;
+
+  const preferencias = {
+    generos: generos,
+    tamanhoLivro: tamanho,
+    frequenciaRecomendacoes: frequencia,
+    orcamentoMensal: parseFloat(orcamento),
+  };
+
+  console.log("Preferências salvas:", preferencias);
+  mostrarNotificacao(
+    "Preferências salvas! A IA foi atualizada com seus novos gostos.",
+    "sucesso"
+  );
+
+  // Simular retreinamento
+  setTimeout(() => {
+    mostrarNotificacao(
+      "Modelo retreinado com suas novas preferências!",
+      "info"
+    );
+  }, 2000);
+}
+
+function retreinarModelo() {
+  const button = event.target;
+  button.textContent = "🔄 Retreinando...";
+  button.disabled = true;
+
+  let progresso = 0;
+  const interval = setInterval(() => {
+    progresso += Math.random() * 20;
+
+    if (progresso >= 100) {
+      clearInterval(interval);
+      button.textContent = "🧠 Retreinar Modelo";
+      button.disabled = false;
+      mostrarNotificacao(
+        "Modelo retreinado com sucesso! Precisão atual: 95.2%",
+        "sucesso"
+      );
+    } else {
+      button.textContent = `🔄 Retreinando... ${Math.floor(progresso)}%`;
+    }
+  }, 500);
+}
+
+// ============================== FUNÇÕES DE NOTIFICAÇÃO ==============================
+
+function mostrarNotificacao(mensagem, tipo = "info") {
+  // Remover notificação existente
+  const existente = document.querySelector(".notificacao");
+  if (existente) {
+    existente.remove();
+  }
+
+  const notificacao = document.createElement("div");
+  notificacao.className = `notificacao notificacao-${tipo}`;
+
+  const icones = {
+    sucesso: "✅",
+    erro: "❌",
+    info: "ℹ️",
+    aviso: "⚠️",
+  };
+
+  notificacao.innerHTML = `
+        <span class="notificacao-icone">${icones[tipo] || "ℹ️"}</span>
+        <span class="notificacao-texto">${mensagem}</span>
+        <button class="notificacao-fechar" onclick="this.parentElement.remove()">×</button>
+    `;
+
+  // Adicionar estilos inline para a notificação
+  Object.assign(notificacao.style, {
+    position: "fixed",
+    top: "20px",
+    right: "20px",
+    backgroundColor:
+      tipo === "sucesso"
+        ? "#4caf50"
+        : tipo === "erro"
+        ? "#f44336"
+        : tipo === "aviso"
+        ? "#ff9800"
+        : "#2196f3",
+    color: "white",
+    padding: "15px 20px",
+    borderRadius: "5px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    zIndex: "1000",
+    maxWidth: "400px",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
+  });
+
+  const fechar = notificacao.querySelector(".notificacao-fechar");
+  Object.assign(fechar.style, {
+    background: "none",
+    border: "none",
+    color: "white",
+    fontSize: "18px",
+    cursor: "pointer",
+    marginLeft: "auto",
+  });
+
+  document.body.appendChild(notificacao);
+
+  // Auto remover após 5 segundos
+  setTimeout(() => {
+    if (notificacao.parentElement) {
+      notificacao.remove();
+    }
+  }, 5000);
+}
+
+// ============================== INICIALIZAÇÃO ==============================
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Carregar recomendações se estivermos na página de recomendações
+  if (document.getElementById("recomendacoes-lista")) {
+    carregarRecomendacoes();
+  }
+
+  // Carregar histórico se estivermos na página de histórico
+  if (document.getElementById("historico-compras")) {
+    carregarHistorico();
+  }
+
+  // Configurar primeira tab como ativa
+  const primeiraTab = document.querySelector(".tab-btn");
+  if (primeiraTab && !document.querySelector(".tab-btn.active")) {
+    primeiraTab.classList.add("active");
+    const primeiroContent = document.querySelector(".tab-content");
+    if (primeiroContent) {
+      primeiroContent.classList.add("active");
+    }
+  }
+
+  // Animações de carregamento
+  setTimeout(() => {
+    document
+      .querySelectorAll(".dashboard-card, .recomendacao-card, .activity-item")
+      .forEach((elemento, index) => {
+        elemento.style.animation = `fadeInUp 0.6s ease forwards ${
+          index * 0.1
+        }s`;
+      });
+  }, 100);
+});
+
+// Adicionar estilos de animação
+const style = document.createElement("style");
+style.textContent = `
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .dashboard-card, .recomendacao-card, .activity-item {
+        opacity: 0;
+    }
+`;
+document.head.appendChild(style);

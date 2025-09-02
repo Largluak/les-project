@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Livraria - Consultar Estoque</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Sistema de Livraria</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="entradaEstoque.html">Entrada em Estoque</a>
+        <a href="consultarEstoque.html" class="ativo">Consultar Estoque</a>
+        <a href="reentradaEstoque.html">Reentrada de Estoque</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Consultar Estoque</h2>
+
+      <div class="filtros-container">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="filtroTitulo">Buscar por Título</label>
+            <input
+              type="text"
+              id="filtroTitulo"
+              placeholder="Digite o título do livro"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="filtroAutor">Buscar por Autor</label>
+            <input
+              type="text"
+              id="filtroAutor"
+              placeholder="Digite o nome do autor"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="filtroISBN">Buscar por ISBN</label>
+            <input type="text" id="filtroISBN" placeholder="Digite o ISBN" />
+          </div>
+
+          <div class="form-group">
+            <label for="filtroEstoque">Situação do Estoque</label>
+            <select id="filtroEstoque">
+              <option value="">Todos</option>
+              <option value="disponivel">Disponível</option>
+              <option value="baixo">Baixo Estoque</option>
+              <option value="zerado">Sem Estoque</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="limparFiltros()"
+          >
+            Limpar Filtros
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="aplicarFiltros()"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="tabelaEstoque">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>ISBN</th>
+              <th>Quantidade</th>
+              <th>Valor Custo</th>
+              <th>Valor Venda</th>
+              <th>Categoria</th>
+              <th>Situação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Preenchido via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="paginacao">
+        <button
+          id="btnAnterior"
+          class="btn btn-secondary"
+          onclick="paginaAnterior()"
+        >
+          Anterior
+        </button>
+        <span id="infoPagina">Página 1 de 1</span>
+        <button
+          id="btnProximo"
+          class="btn btn-secondary"
+          onclick="proximaPagina()"
+        >
+          Próximo
+        </button>
+      </div>
+    </main>
+
+    <!-- Modal para detalhes do item -->
+    <div id="modalDetalhes" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModal()">&times;</span>
+        <h3>Detalhes do Item</h3>
+        <div id="conteudoDetalhes">
+          <!-- Conteúdo preenchido via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+      // Inicializa a página de consulta
+      if (typeof initConsultarEstoque === "function") {
+        initConsultarEstoque();
+      }
+    </script>
+  </body>
+</html>

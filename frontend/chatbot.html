@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Assistente - Sistema de Livros</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>📚 Sistema de Livros</h1>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="recomendacoes.html">Recomendações IA</a>
+        <a href="chatbot.html" class="ativo">Chatbot Assistente</a>
+        <a href="historico.html">Histórico & Preferências</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="chatbot-container">
+        <div class="chatbot-header">
+          <h2>🤖 Assistente IA de Livros</h2>
+          <div class="chatbot-status">
+            <span class="status-indicator online"></span>
+            <span>Online - Pronto para ajudar</span>
+          </div>
+        </div>
+
+        <div class="chat-suggestions">
+          <h3>💡 Sugestões de perguntas:</h3>
+          <div class="suggestion-buttons">
+            <button
+              class="suggestion-btn"
+              onclick="enviarSugestao('Preciso de livros de ficção científica')"
+            >
+              🚀 Ficção Científica
+            </button>
+            <button
+              class="suggestion-btn"
+              onclick="enviarSugestao('Qual livro tem boa avaliação de romance?')"
+            >
+              💕 Romance
+            </button>
+            <button
+              class="suggestion-btn"
+              onclick="enviarSugestao('Livros parecidos com Harry Potter')"
+            >
+              ⚡ Fantasia
+            </button>
+            <button
+              class="suggestion-btn"
+              onclick="enviarSugestao('Biografias inspiradoras')"
+            >
+              📖 Biografias
+            </button>
+          </div>
+        </div>
+
+        <div class="chat-window" id="chat-window">
+          <div class="message bot-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+              <p>
+                Olá! Sou seu assistente de livros com IA. Como posso ajudá-lo
+                hoje?
+              </p>
+              <p>
+                Posso sugerir livros baseados em seus gostos, ajudar a encontrar
+                algo específico, ou responder dúvidas sobre nosso catálogo!
+              </p>
+              <span class="message-time">Agora</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-container">
+          <div class="chat-input-wrapper">
+            <input
+              type="text"
+              id="chat-input"
+              placeholder="Digite sua mensagem..."
+              onkeypress="verificarEnter(event)"
+            />
+            <button class="btn-send" onclick="enviarMensagem()">
+              📤 Enviar
+            </button>
+          </div>
+          <div class="chat-actions">
+            <button class="btn-action" onclick="limparChat()">🗑️ Limpar</button>
+            <button class="btn-action" onclick="exportarConversa()">
+              💾 Exportar
+            </button>
+            <button class="btn-action" onclick="avaliarAssistente()">
+              ⭐ Avaliar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chatbot-stats">
+        <h3>📊 Estatísticas do Assistente</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value">98.2%</span>
+            <span class="stat-label">Taxa de Satisfação</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">1.3s</span>
+            <span class="stat-label">Tempo Médio de Resposta</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">4.8⭐</span>
+            <span class="stat-label">Avaliação Média</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">2,847</span>
+            <span class="stat-label">Conversas Hoje</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
