@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id           Int          @id @default(autoincrement())
+  clientCode   String       @unique
+  gender       String
+  name         String
+  birthDate    DateTime
+  cpf          String       @unique
+  email        String       @unique
+  phoneType    String
+  phoneDDD     String
+  phoneNumber  String
+  passwordHash String
+  ranking      Int          @default(0)
+  active       Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  addresses    Address[]
+  cards        Card[]
+  transactions Transaction[]
+}
+
+model Address {
+  id           Int      @id @default(autoincrement())
+  clientId     Int
+  name         String
+  residenceType String
+  streetType   String
+  street       String
+  number       String
+  district     String
+  cep          String
+  city         String
+  state        String
+  country      String
+  observations String?
+  isBilling    Boolean  @default(false)
+  isDelivery   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model Card {
+  id           Int      @id @default(autoincrement())
+  clientId     Int
+  cardNumber   String
+  cardName     String
+  brand        String
+  securityCode String
+  isPreferred  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id         Int      @id @default(autoincrement())
+  clientId   Int
+  amount     Float
+  status     String
+  createdAt  DateTime @default(now())
+
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
