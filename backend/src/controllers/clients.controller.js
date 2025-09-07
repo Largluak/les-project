@@ -1,13 +1,12 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
-const { nanoid } = require("nanoid");
 const {
   clientSchema,
   passwordSchema,
   addressSchema,
   cardSchema,
-} = require("../utils/validators");
+} = require("../utils/validator.js");
 
 const SALT_ROUNDS = 10;
 
@@ -20,15 +19,14 @@ module.exports = {
       const hasBilling = (payload.addresses || []).some((a) => a.isBilling);
       const hasDelivery = (payload.addresses || []).some((a) => a.isDelivery);
       if (!hasBilling || !hasDelivery) {
-        return res
-          .status(400)
-          .json({
-            message:
-              "É obrigatório ao menos 1 endereço de cobrança e 1 de entrega.",
-          });
+        return res.status(400).json({
+          message:
+            "É obrigatório ao menos 1 endereço de cobrança e 1 de entrega.",
+        });
       }
 
       const passwordHash = await bcrypt.hash(payload.password, SALT_ROUNDS);
+      const { nanoid } = await import("nanoid");
       const clientCode = `C-${nanoid(8)}`;
 
       const client = await prisma.client.create({
@@ -331,6 +329,89 @@ module.exports = {
       res.json(transactions);
     } catch (err) {
       next(err);
+    }
+  },
+
+  async getDashboardStats(req, res) {
+    try {
+      const stats = await clientsService.getDashboardStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Erro ao buscar estatísticas do dashboard:", error);
+      res.status(500).json({
+        error: "Erro interno do servidor ao buscar estatísticas",
+      });
+    }
+  },
+  async toggleClientStatus(req, res) {
+    try {
+      const { id } = req.params;
+
+      // Chama o service para alternar o status do cliente
+      const updatedClient = await clientsService.toggleClientStatus(id);
+
+      res.json({
+        message: `Cliente ${
+          updatedClient.active ? "ativado" : "desativado"
+        } com sucesso`,
+        client: updatedClient,
+      });
+    } catch (error) {
+      console.error("Erro ao alternar status do cliente:", error);
+
+      if (error.message === "Cliente não encontrado") {
+        return res.status(404).json({ error: error.message });
+      }
+
+      res.status(500).json({
+        error: "Erro interno do servidor ao alternar status do cliente",
+      });
+    }
+  },
+  async updateRanking(req, res) {
+    try {
+      const { id } = req.params;
+
+      // Chama o service para recalcular o ranking do cliente
+      const newRanking = await clientsService.updateRanking(id);
+
+      res.json({
+        message: "Ranking atualizado com sucesso",
+        clientId: id,
+        newRanking: newRanking,
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar ranking do cliente:", error);
+
+      if (error.message === "Cliente não encontrado") {
+        return res.status(404).json({ error: error.message });
+      }
+
+      res.status(500).json({
+        error: "Erro interno do servidor ao atualizar ranking",
+      });
+    }
+  },
+  async removeAddress(req, res) {
+    try {
+      const { id, addrId } = req.params;
+
+      await clientsService.removeAddress(id, addrId);
+      res.json({ message: "Endereço removido com sucesso" });
+    } catch (error) {
+      console.error("Erro ao remover endereço:", error);
+      res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  },
+  async removeCard(req, res) {
+    try {
+      const { id, cardId } = req.params;
+
+      await clientsService.removeCard(id, cardId);
+      res.json({ message: "Cartão removido com sucesso" });
+    } catch (error) {
+      console.error("Erro ao remover cartão:", error);
+      res.status(500).json({ error: "Erro interno do servidor" });
     }
   },
 };

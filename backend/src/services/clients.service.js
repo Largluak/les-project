@@ -1,6 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
-const { nanoid } = require("nanoid");
 
 const prisma = new PrismaClient();
 const SALT_ROUNDS = 10;
@@ -22,6 +21,7 @@ class ClientsService {
 
     // Hash da senha e geração do código
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+    const { nanoid } = await import("nanoid");
     const clientCode = `C-${nanoid(8)}`;
 
     // Calcular ranking inicial baseado nos dados
