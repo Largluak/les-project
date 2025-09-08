@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alterar Senha</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header>
@@ -25,16 +25,35 @@
     <main>
       <h2>Alterar Senha</h2>
       <form id="formSenha">
+        <label for="clienteId">Selecionar Cliente*</label>
+        <select id="clienteId" required>
+          <option value="">Carregando clientes...</option>
+        </select>
+
+        <label for="senhaAtual">Senha Atual*</label>
+        <input type="password" id="senhaAtual" required />
+
         <label for="novaSenha">Nova Senha*</label>
         <input type="password" id="novaSenha" required />
+        <small
+          >Mínimo 8 caracteres, deve conter: maiúscula, minúscula, número e
+          caractere especial</small
+        >
 
-        <label for="confirmNovaSenha">Confirmar Senha*</label>
+        <label for="confirmNovaSenha">Confirmar Nova Senha*</label>
         <input type="password" id="confirmNovaSenha" required />
 
-        <button type="submit">Alterar</button>
+        <button type="submit">Alterar Senha</button>
       </form>
+
+      <!-- Informações do cliente selecionado -->
+      <div id="infoCliente" class="cliente-info" style="display: none">
+        <h3>Cliente Selecionado:</h3>
+        <p><strong>Nome:</strong> <span id="nomeCliente"></span></p>
+        <p><strong>Email:</strong> <span id="emailCliente"></span></p>
+      </div>
     </main>
 
-    <script src="script.js"></script>
+    <script src="scripts/script-clients.js"></script>
   </body>
 </html>

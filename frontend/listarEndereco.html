@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Listar Clientes</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header>
@@ -18,9 +18,7 @@
         <a href="listarEndereco.html" class="ativo">Listar Endereços</a>
         <a href="listarCartoes.html">Listar Cartões</a>
         <a href="alterarSenha.html">Alterar Senha</a>
-        <a href="analiseHistoricoVendas.html"
-          >Análise de Vendas</a
-        >
+        <a href="analiseHistoricoVendas.html">Análise de Vendas</a>
       </nav>
     </header>
 
@@ -56,41 +54,81 @@
         <span class="close" onclick="fecharModal()">&times;</span>
         <h3>Editar Endereço</h3>
         <form id="formEditarEndereco">
-          <input type="hidden" id="clienteIndex" />
-          <input type="hidden" id="enderecoIndex" />
+          <div class="form-group">
+            <label for="editTipo">Tipo de Residência:</label>
+            <select id="editTipo" required>
+              <option value="">Selecione...</option>
+              <option value="Casa">Casa</option>
+              <option value="Apartamento">Apartamento</option>
+              <option value="Cobertura">Cobertura</option>
+              <option value="Kitnet">Kitnet</option>
+              <option value="Comercial">Comercial</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
 
-          <label>Tipo:</label>
-          <input type="text" id="editTipo" required />
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="editLogradouro">Logradouro:</label>
+              <input type="text" id="editLogradouro" required />
+            </div>
+            <div class="form-group flex-1">
+              <label for="editNumero">Número:</label>
+              <input type="text" id="editNumero" required />
+            </div>
+          </div>
 
-          <label>Logradouro:</label>
-          <input type="text" id="editLogradouro" required />
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="editBairro">Bairro:</label>
+              <input type="text" id="editBairro" required />
+            </div>
+            <div class="form-group flex-1">
+              <label for="editCidade">Cidade:</label>
+              <input type="text" id="editCidade" required />
+            </div>
+          </div>
 
-          <label>Número:</label>
-          <input type="text" id="editNumero" required />
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="editCep">CEP:</label>
+              <input
+                type="text"
+                id="editCep"
+                placeholder="00000-000"
+                required
+              />
+            </div>
+            <div class="form-group flex-1">
+              <label for="editEstado">Estado:</label>
+              <input type="text" id="editEstado" required />
+            </div>
+          </div>
 
-          <label>Bairro:</label>
-          <input type="text" id="editBairro" required />
+          <div class="form-group">
+            <label for="editPais">País:</label>
+            <input type="text" id="editPais" value="Brasil" />
+          </div>
 
-          <label>Cidade:</label>
-          <input type="text" id="editCidade" required />
+          <div class="form-group">
+            <label for="editObservacoes">Complemento:</label>
+            <textarea
+              id="editObservacoes"
+              rows="3"
+              placeholder="Observações adicionais (opcional)"
+            ></textarea>
+          </div>
 
-          <label>CEP:</label>
-          <input type="text" id="editCep" required />
-
-          <label>Estado:</label>
-          <input type="text" id="editEstado" required />
-
-          <label>País:</label>
-          <input type="text" id="editPais" required />
-
-          <label>Complemento:</label>
-          <input type="text" id="editObservacoes" />
-
-          <button type="submit" class="btn-confirm">Salvar</button>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" onclick="fecharModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-confirm">Salvar Alterações</button>
+          </div>
         </form>
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="scripts/script-clients.js"></script>
   </body>
 </html>

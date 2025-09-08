@@ -175,24 +175,7 @@ const clientSchema = Joi.object({
         isDelivery: Joi.boolean().default(false),
       })
     )
-    .min(1)
-    .custom((addresses, helpers) => {
-      const hasBilling = addresses.some((addr) => addr.isBilling);
-      const hasDelivery = addresses.some((addr) => addr.isDelivery);
-
-      if (!hasBilling) {
-        return helpers.error("addresses.noBilling");
-      }
-      if (!hasDelivery) {
-        return helpers.error("addresses.noDelivery");
-      }
-
-      return addresses;
-    })
-    .messages({
-      "addresses.noBilling": "É obrigatório pelo menos um endereço de cobrança",
-      "addresses.noDelivery": "É obrigatório pelo menos um endereço de entrega",
-    })
+    .min(0) // MUDANÇA: permitir 0 endereços
     .optional(),
   cards: Joi.array()
     .items(
@@ -227,6 +210,7 @@ const clientSchema = Joi.object({
         isPreferred: Joi.boolean().default(false),
       })
     )
+    .min(0) // MUDANÇA: permitir 0 cartões
     .optional(),
 }).options({ allowUnknown: false });
 

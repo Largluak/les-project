@@ -7,6 +7,7 @@ const {
   addressSchema,
   cardSchema,
 } = require("../utils/validator.js");
+const clientsService = require("../services/clients.service.js");
 
 const SALT_ROUNDS = 10;
 
@@ -16,13 +17,16 @@ module.exports = {
       const payload = req.body;
       await clientSchema.validateAsync(payload, { abortEarly: false });
 
-      const hasBilling = (payload.addresses || []).some((a) => a.isBilling);
-      const hasDelivery = (payload.addresses || []).some((a) => a.isDelivery);
-      if (!hasBilling || !hasDelivery) {
-        return res.status(400).json({
-          message:
-            "É obrigatório ao menos 1 endereço de cobrança e 1 de entrega.",
-        });
+      if (payload.addresses && payload.addresses.length > 0) {
+        const hasBilling = payload.addresses.some((a) => a.isBilling);
+        const hasDelivery = payload.addresses.some((a) => a.isDelivery);
+
+        if (!hasBilling || !hasDelivery) {
+          return res.status(400).json({
+            message:
+              "Quando há endereços, é obrigatório ao menos 1 de cobrança e 1 de entrega.",
+          });
+        }
       }
 
       const passwordHash = await bcrypt.hash(payload.password, SALT_ROUNDS);
@@ -42,32 +46,38 @@ module.exports = {
           phoneNumber: payload.phone.number,
           passwordHash,
           ranking: payload.ranking ?? 0,
-          addresses: {
-            create: (payload.addresses || []).map((a) => ({
-              name: a.name,
-              residenceType: a.residenceType,
-              streetType: a.streetType,
-              street: a.street,
-              number: a.number,
-              district: a.district,
-              cep: a.cep,
-              city: a.city,
-              state: a.state,
-              country: a.country,
-              observations: a.observations,
-              isBilling: !!a.isBilling,
-              isDelivery: !!a.isDelivery,
-            })),
-          },
-          cards: {
-            create: (payload.cards || []).map((c) => ({
-              cardNumber: c.cardNumber,
-              cardName: c.cardName,
-              brand: c.brand,
-              securityCode: c.securityCode,
-              isPreferred: !!c.isPreferred,
-            })),
-          },
+          ...(payload.addresses &&
+            payload.addresses.length > 0 && {
+              addresses: {
+                create: payload.addresses.map((a) => ({
+                  name: a.name,
+                  residenceType: a.residenceType,
+                  streetType: a.streetType,
+                  street: a.street,
+                  number: a.number,
+                  district: a.district,
+                  cep: a.cep,
+                  city: a.city,
+                  state: a.state,
+                  country: a.country,
+                  observations: a.observations,
+                  isBilling: !!a.isBilling,
+                  isDelivery: !!a.isDelivery,
+                })),
+              },
+            }),
+          ...(payload.cards &&
+            payload.cards.length > 0 && {
+              cards: {
+                create: payload.cards.map((c) => ({
+                  cardNumber: c.cardNumber,
+                  cardName: c.cardName,
+                  brand: c.brand,
+                  securityCode: c.securityCode,
+                  isPreferred: !!c.isPreferred,
+                })),
+              },
+            }),
         },
         include: { addresses: true, cards: true },
       });
@@ -198,6 +208,73 @@ module.exports = {
     }
   },
 
+  async deleteClient(req, res, next) {
+    try {
+      const clientId = parseInt(req.params.id);
+
+      // Verificar se o cliente existe
+      const cliente = await prisma.client.findUnique({
+        where: { id: clientId },
+        include: {
+          addresses: true,
+          cards: true,
+          transactions: true,
+        },
+      });
+
+      if (!cliente) {
+        return res.status(404).json({ message: "Cliente não encontrado" });
+      }
+
+      // Remover em cascata (se não estiver configurado no Prisma schema)
+      // Remover transações
+      await prisma.transaction.deleteMany({
+        where: { clientId },
+      });
+
+      // Remover cartões
+      await prisma.card.deleteMany({
+        where: { clientId },
+      });
+
+      // Remover endereços
+      await prisma.address.deleteMany({
+        where: { clientId },
+      });
+
+      // Remover cliente
+      await prisma.client.delete({
+        where: { id: clientId },
+      });
+
+      res.json({
+        message: "Cliente removido com sucesso",
+        removedData: {
+          cliente: cliente.name,
+          enderecos: cliente.addresses.length,
+          cartoes: cliente.cards.length,
+          transacoes: cliente.transactions.length,
+        },
+      });
+    } catch (err) {
+      console.error("Erro ao remover cliente:", err);
+
+      if (err.code === "P2025") {
+        return res.status(404).json({ message: "Cliente não encontrado" });
+      }
+
+      // Se há restrições de chave estrangeira
+      if (err.code === "P2003") {
+        return res.status(400).json({
+          message:
+            "Não é possível remover este cliente pois possui dados relacionados",
+        });
+      }
+
+      next(err);
+    }
+  },
+
   async addAddress(req, res, next) {
     try {
       const clientId = parseInt(req.params.id);
@@ -316,6 +393,43 @@ module.exports = {
       });
       res.json(updated);
     } catch (err) {
+      next(err);
+    }
+  },
+
+  async updateCard(req, res, next) {
+    try {
+      const clientId = parseInt(req.params.id);
+      const cardId = parseInt(req.params.cardId);
+      const payload = req.body;
+
+      await cardSchema.validateAsync(payload);
+
+      // Se está definindo como preferencial, remove preferência dos outros
+      if (payload.isPreferred) {
+        await prisma.card.updateMany({
+          where: { clientId },
+          data: { isPreferred: false },
+        });
+      }
+
+      const updated = await prisma.card.update({
+        where: { id: cardId },
+        data: {
+          cardNumber: payload.cardNumber,
+          cardName: payload.cardName,
+          brand: payload.brand,
+          securityCode: payload.securityCode,
+          isPreferred: !!payload.isPreferred,
+        },
+      });
+
+      res.json(updated);
+    } catch (err) {
+      if (err.isJoi)
+        return res
+          .status(400)
+          .json({ message: "Validation error", details: err.details });
       next(err);
     }
   },

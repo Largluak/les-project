@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cartões de Clientes</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header>
@@ -25,8 +25,14 @@
     <main>
       <h2>Cartões de Crédito</h2>
       <form id="formCartao">
+        <label for="clienteId">Cliente*</label>
+        <select id="clienteId" required>
+          <option value="">Selecione um cliente</option>
+          <!-- Opções serão carregadas via JavaScript -->
+        </select>
+
         <label for="numeroCartao">Nº do Cartão*</label>
-        <input type="text" id="numeroCartao" required />
+        <input type="text" id="numeroCartao" maxlength="19" required />
 
         <label for="nomeCartao">Nome impresso*</label>
         <input type="text" id="nomeCartao" required />
@@ -34,13 +40,15 @@
         <label for="bandeiraCartao">Bandeira*</label>
         <select id="bandeiraCartao" required>
           <option value="">Selecione</option>
-          <option>Visa</option>
-          <option>MasterCard</option>
-          <option>Amex</option>
+          <option value="Visa">Visa</option>
+          <option value="MasterCard">MasterCard</option>
+          <option value="Amex">American Express</option>
+          <option value="Elo">Elo</option>
+          <option value="Hipercard">Hipercard</option>
         </select>
 
         <label for="codigoSeguranca">Código de Segurança*</label>
-        <input type="text" id="codigoSeguranca" required />
+        <input type="text" id="codigoSeguranca" maxlength="4" required />
 
         <label for="preferencial">Cartão preferencial</label>
         <input type="checkbox" id="preferencial" />
@@ -49,6 +57,6 @@
       </form>
     </main>
 
-    <script src="script.js"></script>
+    <script src="scripts/script-clients.js"></script>
   </body>
 </html>

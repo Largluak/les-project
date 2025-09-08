@@ -10,6 +10,7 @@ router.post("/", clientsController.createClient);
 router.get("/", clientsController.listClients);
 router.get("/:id", clientsController.getClientById);
 router.put("/:id", clientsController.updateClient);
+router.delete("/:id", clientsController.deleteClient);
 router.patch("/:id/password", clientsController.changePassword);
 router.patch("/:id/toggle-status", clientsController.toggleClientStatus);
 router.patch("/:id/update-ranking", clientsController.updateRanking);
@@ -21,6 +22,7 @@ router.delete("/:id/addresses/:addrId", clientsController.removeAddress);
 
 // Cartões
 router.post("/:id/cards", clientsController.addCard);
+router.put("/:id/cards/:cardId", clientsController.updateCard);
 router.patch("/:id/cards/:cardId/prefer", clientsController.setPreferredCard);
 router.delete("/:id/cards/:cardId", clientsController.removeCard);
 

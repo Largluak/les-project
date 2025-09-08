@@ -153,6 +153,54 @@ class ClientsService {
     });
   }
 
+  async deleteClient(clientId) {
+    const id = parseInt(clientId);
+
+    // Buscar cliente com dados relacionados
+    const cliente = await prisma.client.findUnique({
+      where: { id },
+      include: {
+        addresses: true,
+        cards: true,
+        transactions: true,
+      },
+    });
+
+    if (!cliente) {
+      throw new Error("Cliente não encontrado");
+    }
+
+    // Remover em cascata
+    await prisma.$transaction(async (tx) => {
+      // Remover transações
+      await tx.transaction.deleteMany({
+        where: { clientId: id },
+      });
+
+      // Remover cartões
+      await tx.card.deleteMany({
+        where: { clientId: id },
+      });
+
+      // Remover endereços
+      await tx.address.deleteMany({
+        where: { clientId: id },
+      });
+
+      // Remover cliente
+      await tx.client.delete({
+        where: { id },
+      });
+    });
+
+    return {
+      cliente: cliente.name,
+      enderecos: cliente.addresses.length,
+      cartoes: cliente.cards.length,
+      transacoes: cliente.transactions.length,
+    };
+  }
+
   // Alterar senha
   async changePassword(id, oldPassword, newPassword) {
     const client = await prisma.client.findUnique({
@@ -238,9 +286,12 @@ class ClientsService {
   }
 
   // Remover endereço
-  async removeAddress(addressId) {
+  async removeAddress(clientId, addressId) {
     return await prisma.address.delete({
-      where: { id: parseInt(addressId) },
+      where: {
+        id: parseInt(addressId),
+        clientId: parseInt(clientId),
+      },
     });
   }
 
@@ -280,9 +331,12 @@ class ClientsService {
   }
 
   // Remover cartão
-  async removeCard(cardId) {
+  async removeCard(clientId, cardId) {
     return await prisma.card.delete({
-      where: { id: parseInt(cardId) },
+      where: {
+        id: parseInt(cardId),
+        clientId: parseInt(clientId),
+      },
     });
   }
 
@@ -381,7 +435,7 @@ class ClientsService {
         prisma.client.count({ where: { active: true } }),
         prisma.client.count({ where: { active: false } }),
         prisma.client.findFirst({
-          orderBy: { ranking: "desc" },
+          orderBy: { ranking: "asc" },
           select: { name: true, ranking: true },
         }),
       ]);

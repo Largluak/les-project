@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Listar Clientes</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header>
@@ -48,29 +48,81 @@
         <span class="close" onclick="fecharModalCartao()">&times;</span>
         <h2>Editar Cartão</h2>
         <form id="formEditarCartao">
-          <label>Número do Cartão:</label>
-          <input type="text" id="editNumeroCartao" required />
+          <div class="form-group">
+            <label for="editNumeroCartao">Número do Cartão:</label>
+            <input
+              type="text"
+              id="editNumeroCartao"
+              placeholder="0000 0000 0000 0000"
+              maxlength="19"
+              required
+            />
+          </div>
 
-          <label>Nome no Cartão:</label>
-          <input type="text" id="editNomeCartao" required />
+          <div class="form-group">
+            <label for="editNomeCartao">Nome no Cartão:</label>
+            <input
+              type="text"
+              id="editNomeCartao"
+              placeholder="Nome como impresso no cartão"
+              style="text-transform: uppercase"
+              required
+            />
+          </div>
 
-          <label>Bandeira:</label>
-          <input type="text" id="editBandeiraCartao" required />
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="editBandeiraCartao">Bandeira:</label>
+              <select id="editBandeiraCartao" required>
+                <option value="">Selecione...</option>
+                <option value="Visa">Visa</option>
+                <option value="MasterCard">MasterCard</option>
+                <option value="American Express">American Express</option>
+                <option value="Elo">Elo</option>
+                <option value="Hipercard">Hipercard</option>
+                <option value="Diners">Diners</option>
+                <option value="Discover">Discover</option>
+                <option value="JCB">JCB</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="editCodigoCartao">Código de Segurança:</label>
+              <input
+                type="text"
+                id="editCodigoCartao"
+                placeholder="000"
+                maxlength="4"
+                required
+              />
+            </div>
+          </div>
 
-          <label>Código de Segurança:</label>
-          <input type="text" id="editCodigoCartao" required />
+          <div class="form-group">
+            <label for="editPreferencialCartao">Cartão Preferencial:</label>
+            <select id="editPreferencialCartao">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+            <small class="form-help"
+              >Se marcado como preferencial, será o cartão padrão para
+              compras</small
+            >
+          </div>
 
-          <label>Preferencial:</label>
-          <select id="editPreferencialCartao">
-            <option value="true">Sim</option>
-            <option value="false">Não</option>
-          </select>
-
-          <button type="submit" class="btn-confirm">Salvar Alterações</button>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-cancel"
+              onclick="fecharModalCartao()"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-confirm">Salvar Alterações</button>
+          </div>
         </form>
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="scripts/script-clients.js"></script>
   </body>
 </html>
