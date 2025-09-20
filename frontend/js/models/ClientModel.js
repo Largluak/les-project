@@ -224,3 +224,5 @@ class ClientModel {
 
 // Exportar instância única
 window.ClientModel = new ClientModel();
+
+

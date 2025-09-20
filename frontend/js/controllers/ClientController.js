@@ -344,3 +344,5 @@ class ClientController {
 
 // Exportar instância única
 window.ClientController = new ClientController();
+
+

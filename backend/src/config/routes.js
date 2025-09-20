@@ -32,3 +32,5 @@ class RoutesConfig {
 }
 
 module.exports = RoutesConfig;
+
+

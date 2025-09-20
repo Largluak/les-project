@@ -361,3 +361,5 @@ class ClientView {
 
 // Exportar instância única
 window.ClientView = new ClientView();
+
+

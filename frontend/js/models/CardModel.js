@@ -200,3 +200,5 @@ class CardModel {
 
 // Exportar instância única
 window.CardModel = new CardModel();
+
+
