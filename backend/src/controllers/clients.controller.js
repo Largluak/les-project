@@ -1,15 +1,13 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-const bcrypt = require("bcrypt");
 const {
   clientSchema,
   passwordSchema,
   addressSchema,
   cardSchema,
 } = require("../utils/validator.js");
-const clientsService = require("../services/clients.service.js");
-
-const SALT_ROUNDS = 10;
+const ClientModel = require("../models/Client");
+const AddressModel = require("../models/Address");
+const CardModel = require("../models/Card");
+const TransactionModel = require("../models/Transaction");
 
 module.exports = {
   async createClient(req, res, next) {
@@ -17,6 +15,7 @@ module.exports = {
       const payload = req.body;
       await clientSchema.validateAsync(payload, { abortEarly: false });
 
+      // Validar endereços obrigatórios
       if (payload.addresses && payload.addresses.length > 0) {
         const hasBilling = payload.addresses.some((a) => a.isBilling);
         const hasDelivery = payload.addresses.some((a) => a.isDelivery);
@@ -29,61 +28,10 @@ module.exports = {
         }
       }
 
-      const passwordHash = await bcrypt.hash(payload.password, SALT_ROUNDS);
-      const { nanoid } = await import("nanoid");
-      const clientCode = `C-${nanoid(8)}`;
-
-      const client = await prisma.client.create({
-        data: {
-          clientCode,
-          gender: payload.gender,
-          name: payload.name,
-          birthDate: new Date(payload.birthDate),
-          cpf: payload.cpf,
-          email: payload.email,
-          phoneType: payload.phone.type,
-          phoneDDD: payload.phone.ddd,
-          phoneNumber: payload.phone.number,
-          passwordHash,
-          ranking: payload.ranking ?? 0,
-          ...(payload.addresses &&
-            payload.addresses.length > 0 && {
-              addresses: {
-                create: payload.addresses.map((a) => ({
-                  name: a.name,
-                  residenceType: a.residenceType,
-                  streetType: a.streetType,
-                  street: a.street,
-                  number: a.number,
-                  district: a.district,
-                  cep: a.cep,
-                  city: a.city,
-                  state: a.state,
-                  country: a.country,
-                  observations: a.observations,
-                  isBilling: !!a.isBilling,
-                  isDelivery: !!a.isDelivery,
-                })),
-              },
-            }),
-          ...(payload.cards &&
-            payload.cards.length > 0 && {
-              cards: {
-                create: payload.cards.map((c) => ({
-                  cardNumber: c.cardNumber,
-                  cardName: c.cardName,
-                  brand: c.brand,
-                  securityCode: c.securityCode,
-                  isPreferred: !!c.isPreferred,
-                })),
-              },
-            }),
-        },
-        include: { addresses: true, cards: true },
-      });
-
+      const client = await ClientModel.create(payload);
       return res.status(201).json(client);
     } catch (err) {
+      console.log("Erro de validação:", err.details || err.message);
       if (err.code === "P2002") {
         return res
           .status(409)
@@ -99,19 +47,9 @@ module.exports = {
 
   async listClients(req, res, next) {
     try {
-      const { name, cpf, email, clientCode, active } = req.query;
-      const where = {};
-      if (name) where.name = { contains: name, mode: "insensitive" };
-      if (cpf) where.cpf = cpf;
-      if (email) where.email = email;
-      if (clientCode) where.clientCode = clientCode;
-      if (active !== undefined) where.active = active === "true";
-
-      const clients = await prisma.client.findMany({
-        where,
-        include: { addresses: true, cards: true },
-      });
-      res.json(clients);
+      const filters = req.query;
+      const result = await ClientModel.findAll(filters);
+      res.json(result);
     } catch (err) {
       next(err);
     }
@@ -119,142 +57,89 @@ module.exports = {
 
   async getClientById(req, res, next) {
     try {
-      const id = parseInt(req.params.id);
-      const client = await prisma.client.findUnique({
-        where: { id },
-        include: { addresses: true, cards: true, transactions: true },
-      });
-      if (!client)
-        return res.status(404).json({ message: "Cliente não encontrado" });
+      const id = req.params.id;
+      const client = await ClientModel.findById(id);
       res.json(client);
     } catch (err) {
+      if (err.message === "Cliente não encontrado") {
+        return res.status(404).json({ message: err.message });
+      }
       next(err);
     }
   },
 
   async updateClient(req, res, next) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const payload = req.body;
 
-      // Basic allowed updates — avoid password here
-      const data = {
-        gender: payload.gender,
-        name: payload.name,
-        birthDate: payload.birthDate ? new Date(payload.birthDate) : undefined,
-        cpf: payload.cpf,
-        email: payload.email,
-        phoneType: payload.phone?.type,
-        phoneDDD: payload.phone?.ddd,
-        phoneNumber: payload.phone?.number,
-        ranking: payload.ranking,
-      };
-
-      const updated = await prisma.client.update({
-        where: { id },
-        data,
-      });
-
+      const updated = await ClientModel.update(id, payload);
       res.json(updated);
     } catch (err) {
       if (err.code === "P2002")
         return res
           .status(409)
           .json({ message: "CPF ou e-mail já cadastrado." });
+      if (err.message === "Cliente não encontrado") {
+        return res.status(404).json({ message: err.message });
+      }
       next(err);
     }
   },
 
   async changePassword(req, res, next) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const { oldPassword, newPassword, newPasswordConfirm } = req.body;
+
       await passwordSchema.validateAsync({
         oldPassword,
         newPassword,
         newPasswordConfirm,
       });
 
-      const client = await prisma.client.findUnique({ where: { id } });
-      if (!client)
-        return res.status(404).json({ message: "Cliente não encontrado" });
-
-      const match = await bcrypt.compare(oldPassword, client.passwordHash);
-      if (!match)
-        return res.status(401).json({ message: "Senha atual incorreta" });
-
-      const newHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
-      await prisma.client.update({
-        where: { id },
-        data: { passwordHash: newHash },
-      });
-      res.json({ message: "Senha alterada com sucesso" });
+      const result = await ClientModel.changePassword(
+        id,
+        oldPassword,
+        newPassword
+      );
+      res.json(result);
     } catch (err) {
       if (err.isJoi)
         return res
           .status(400)
           .json({ message: "Validation error", details: err.details });
+      if (err.message === "Cliente não encontrado") {
+        return res.status(404).json({ message: err.message });
+      }
+      if (err.message === "Senha atual incorreta") {
+        return res.status(401).json({ message: err.message });
+      }
       next(err);
     }
   },
 
   async inactivateClient(req, res, next) {
     try {
-      const id = parseInt(req.params.id);
-      await prisma.client.update({ where: { id }, data: { active: false } });
+      const id = req.params.id;
+      await ClientModel.toggleStatus(id);
       res.json({ message: "Cliente inativado" });
     } catch (err) {
+      if (err.message === "Cliente não encontrado") {
+        return res.status(404).json({ message: err.message });
+      }
       next(err);
     }
   },
 
   async deleteClient(req, res, next) {
     try {
-      const clientId = parseInt(req.params.id);
-
-      // Verificar se o cliente existe
-      const cliente = await prisma.client.findUnique({
-        where: { id: clientId },
-        include: {
-          addresses: true,
-          cards: true,
-          transactions: true,
-        },
-      });
-
-      if (!cliente) {
-        return res.status(404).json({ message: "Cliente não encontrado" });
-      }
-
-      // Remover em cascata (se não estiver configurado no Prisma schema)
-      // Remover transações
-      await prisma.transaction.deleteMany({
-        where: { clientId },
-      });
-
-      // Remover cartões
-      await prisma.card.deleteMany({
-        where: { clientId },
-      });
-
-      // Remover endereços
-      await prisma.address.deleteMany({
-        where: { clientId },
-      });
-
-      // Remover cliente
-      await prisma.client.delete({
-        where: { id: clientId },
-      });
+      const clientId = req.params.id;
+      const removedData = await ClientModel.delete(clientId);
 
       res.json({
         message: "Cliente removido com sucesso",
-        removedData: {
-          cliente: cliente.name,
-          enderecos: cliente.addresses.length,
-          cartoes: cliente.cards.length,
-          transacoes: cliente.transactions.length,
-        },
+        removedData,
       });
     } catch (err) {
       console.error("Erro ao remover cliente:", err);
@@ -263,12 +148,15 @@ module.exports = {
         return res.status(404).json({ message: "Cliente não encontrado" });
       }
 
-      // Se há restrições de chave estrangeira
       if (err.code === "P2003") {
         return res.status(400).json({
           message:
             "Não é possível remover este cliente pois possui dados relacionados",
         });
+      }
+
+      if (err.message === "Cliente não encontrado") {
+        return res.status(404).json({ message: err.message });
       }
 
       next(err);
@@ -277,29 +165,11 @@ module.exports = {
 
   async addAddress(req, res, next) {
     try {
-      const clientId = parseInt(req.params.id);
+      const clientId = req.params.id;
       const payload = req.body;
       await addressSchema.validateAsync(payload);
 
-      const address = await prisma.address.create({
-        data: {
-          clientId,
-          name: payload.name,
-          residenceType: payload.residenceType,
-          streetType: payload.streetType,
-          street: payload.street,
-          number: payload.number,
-          district: payload.district,
-          cep: payload.cep,
-          city: payload.city,
-          state: payload.state,
-          country: payload.country,
-          observations: payload.observations,
-          isBilling: !!payload.isBilling,
-          isDelivery: !!payload.isDelivery,
-        },
-      });
-
+      const address = await AddressModel.create(clientId, payload);
       res.status(201).json(address);
     } catch (err) {
       if (err.isJoi)
@@ -312,63 +182,31 @@ module.exports = {
 
   async updateAddress(req, res, next) {
     try {
-      const addrId = parseInt(req.params.addrId);
+      const addrId = req.params.addrId;
       const payload = req.body;
       await addressSchema.validateAsync(payload);
 
-      const updated = await prisma.address.update({
-        where: { id: addrId },
-        data: {
-          name: payload.name,
-          residenceType: payload.residenceType,
-          streetType: payload.streetType,
-          street: payload.street,
-          number: payload.number,
-          district: payload.district,
-          cep: payload.cep,
-          city: payload.city,
-          state: payload.state,
-          country: payload.country,
-          observations: payload.observations,
-          isBilling: !!payload.isBilling,
-          isDelivery: !!payload.isDelivery,
-        },
-      });
-
+      const updated = await AddressModel.update(addrId, payload);
       res.json(updated);
     } catch (err) {
       if (err.isJoi)
         return res
           .status(400)
           .json({ message: "Validation error", details: err.details });
+      if (err.message === "Endereço não encontrado") {
+        return res.status(404).json({ message: err.message });
+      }
       next(err);
     }
   },
 
   async addCard(req, res, next) {
     try {
-      const clientId = parseInt(req.params.id);
+      const clientId = req.params.id;
       const payload = req.body;
       await cardSchema.validateAsync(payload);
 
-      if (payload.isPreferred) {
-        await prisma.card.updateMany({
-          where: { clientId },
-          data: { isPreferred: false },
-        });
-      }
-
-      const card = await prisma.card.create({
-        data: {
-          clientId,
-          cardNumber: payload.cardNumber,
-          cardName: payload.cardName,
-          brand: payload.brand,
-          securityCode: payload.securityCode,
-          isPreferred: !!payload.isPreferred,
-        },
-      });
-
+      const card = await CardModel.create(clientId, payload);
       res.status(201).json(card);
     } catch (err) {
       if (err.isJoi)
@@ -381,66 +219,50 @@ module.exports = {
 
   async setPreferredCard(req, res, next) {
     try {
-      const clientId = parseInt(req.params.id);
-      const cardId = parseInt(req.params.cardId);
-      await prisma.card.updateMany({
-        where: { clientId },
-        data: { isPreferred: false },
-      });
-      const updated = await prisma.card.update({
-        where: { id: cardId },
-        data: { isPreferred: true },
-      });
+      const clientId = req.params.id;
+      const cardId = req.params.cardId;
+      const updated = await CardModel.setPreferred(clientId, cardId);
       res.json(updated);
     } catch (err) {
+      if (err.message === "Cartão não encontrado") {
+        return res.status(404).json({ message: err.message });
+      }
       next(err);
     }
   },
 
   async updateCard(req, res, next) {
     try {
-      const clientId = parseInt(req.params.id);
-      const cardId = parseInt(req.params.cardId);
+      const clientId = req.params.id;
+      const cardId = req.params.cardId;
       const payload = req.body;
 
       await cardSchema.validateAsync(payload);
 
-      // Se está definindo como preferencial, remove preferência dos outros
-      if (payload.isPreferred) {
-        await prisma.card.updateMany({
-          where: { clientId },
-          data: { isPreferred: false },
-        });
-      }
-
-      const updated = await prisma.card.update({
-        where: { id: cardId },
-        data: {
-          cardNumber: payload.cardNumber,
-          cardName: payload.cardName,
-          brand: payload.brand,
-          securityCode: payload.securityCode,
-          isPreferred: !!payload.isPreferred,
-        },
-      });
-
+      const updated = await CardModel.update(cardId, clientId, payload);
       res.json(updated);
     } catch (err) {
       if (err.isJoi)
         return res
           .status(400)
           .json({ message: "Validation error", details: err.details });
+      if (err.message === "Cartão não encontrado") {
+        return res.status(404).json({ message: err.message });
+      }
       next(err);
     }
   },
 
   async listTransactions(req, res, next) {
     try {
-      const clientId = parseInt(req.params.id);
-      const transactions = await prisma.transaction.findMany({
-        where: { clientId },
-      });
-      res.json(transactions);
+      const clientId = req.params.id;
+      const { page = 1, limit = 20 } = req.query;
+      const result = await TransactionModel.findByClientId(
+        clientId,
+        page,
+        limit
+      );
+      res.json(result);
     } catch (err) {
       next(err);
     }
@@ -448,7 +270,7 @@ module.exports = {
 
   async getDashboardStats(req, res) {
     try {
-      const stats = await clientsService.getDashboardStats();
+      const stats = await ClientModel.getStats();
       res.json(stats);
     } catch (error) {
       console.error("Erro ao buscar estatísticas do dashboard:", error);
@@ -460,9 +282,7 @@ module.exports = {
   async toggleClientStatus(req, res) {
     try {
       const { id } = req.params;
-
-      // Chama o service para alternar o status do cliente
-      const updatedClient = await clientsService.toggleClientStatus(id);
+      const updatedClient = await ClientModel.toggleStatus(id);
 
       res.json({
         message: `Cliente ${
@@ -485,9 +305,7 @@ module.exports = {
   async updateRanking(req, res) {
     try {
       const { id } = req.params;
-
-      // Chama o service para recalcular o ranking do cliente
-      const newRanking = await clientsService.updateRanking(id);
+      const newRanking = await ClientModel.updateRanking(id);
 
       res.json({
         message: "Ranking atualizado com sucesso",
@@ -509,22 +327,26 @@ module.exports = {
   async removeAddress(req, res) {
     try {
       const { id, addrId } = req.params;
-
-      await clientsService.removeAddress(id, addrId);
+      await AddressModel.delete(addrId, id);
       res.json({ message: "Endereço removido com sucesso" });
     } catch (error) {
       console.error("Erro ao remover endereço:", error);
+      if (error.message === "Endereço não encontrado") {
+        return res.status(404).json({ error: error.message });
+      }
       res.status(500).json({ error: "Erro interno do servidor" });
     }
   },
   async removeCard(req, res) {
     try {
       const { id, cardId } = req.params;
-
-      await clientsService.removeCard(id, cardId);
+      await CardModel.delete(cardId, id);
       res.json({ message: "Cartão removido com sucesso" });
     } catch (error) {
       console.error("Erro ao remover cartão:", error);
+      if (error.message === "Cartão não encontrado") {
+        return res.status(404).json({ error: error.message });
+      }
       res.status(500).json({ error: "Erro interno do servidor" });
     }
   },

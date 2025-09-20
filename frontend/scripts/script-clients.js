@@ -86,6 +86,35 @@ if (formCliente) {
       return;
     }
 
+    // Coletar todos os endereços preenchidos
+    let enderecos;
+    try {
+      enderecos = coletarEnderecos();
+    } catch (error) {
+      showAlert(error.message, "error");
+      return;
+    }
+
+    // Validar endereços
+    if (enderecos.length === 0) {
+      showAlert("Você deve cadastrar pelo menos um endereço!", "error");
+      return;
+    }
+
+    // Verificar se há pelo menos um endereço de cobrança e um de entrega
+    const temCobranca = enderecos.some((endereco) => endereco.isBilling);
+    const temEntrega = enderecos.some((endereco) => endereco.isDelivery);
+
+    if (!temCobranca) {
+      showAlert("Você deve ter pelo menos um endereço de cobrança!", "error");
+      return;
+    }
+
+    if (!temEntrega) {
+      showAlert("Você deve ter pelo menos um endereço de entrega!", "error");
+      return;
+    }
+
     const payload = {
       name: document.getElementById("nome").value.trim(),
       gender: document.getElementById("genero").value,
@@ -99,9 +128,7 @@ if (formCliente) {
         ddd: telefone.substring(0, 2),
         number: telefone.substring(2),
       },
-      // Por enquanto cliente será cadastrado sem endereços/cartões
-      // Serão adicionados separadamente
-      addresses: [],
+      addresses: enderecos,
       cards: [],
     };
 
@@ -118,7 +145,8 @@ if (formCliente) {
         throw new Error(data.message || "Erro no servidor");
       }
 
-      showAlert("Cliente cadastrado com sucesso!", "success");
+      const mensagemSucesso = `Cliente cadastrado com sucesso! ${enderecos.length} endereço(s) adicionado(s).`;
+      showAlert(mensagemSucesso, "success");
       formCliente.reset();
 
       // Se estiver na página de listagem, recarrega
@@ -596,6 +624,11 @@ async function alterarStatusCliente(id, ativar) {
       "success"
     );
     listarClientes();
+
+    // ✅ Recarregar dashboard se estivermos na página inicial
+    if (typeof carregarDashboard === "function") {
+      carregarDashboard();
+    }
   } catch (err) {
     console.error("Erro ao alterar status:", err);
     showAlert("Erro ao alterar status do cliente", "error");
@@ -1275,6 +1308,263 @@ if (formSenha) {
 }
 
 /**********************************
+ * FUNÇÕES PARA MÚLTIPLOS ENDEREÇOS
+ **********************************/
+
+// Contador global para endereços
+let contadorEnderecos = 1;
+
+// Função para coletar todos os endereços preenchidos
+function coletarEnderecos() {
+  const enderecos = [];
+  const enderecoItems = document.querySelectorAll(".endereco-item");
+
+  enderecoItems.forEach((item, index) => {
+    const numero = index + 1;
+
+    // Verificar se pelo menos um campo obrigatório está preenchido
+    const logradouro = document
+      .getElementById(`logradouro${numero}`)
+      ?.value.trim();
+    const numeroEndereco = document
+      .getElementById(`numero${numero}`)
+      ?.value.trim();
+    const bairro = document.getElementById(`bairro${numero}`)?.value.trim();
+    const cep = document.getElementById(`cep${numero}`)?.value.trim();
+    const cidade = document.getElementById(`cidade${numero}`)?.value.trim();
+    const estado = document.getElementById(`estado${numero}`)?.value;
+
+    // Se algum campo obrigatório estiver preenchido, todos devem estar
+    const camposObrigatorios = [
+      logradouro,
+      numeroEndereco,
+      bairro,
+      cep,
+      cidade,
+      estado,
+    ];
+    const algumPreenchido = camposObrigatorios.some((valor) => valor !== "");
+
+    if (algumPreenchido) {
+      // Verificar se todos os campos obrigatórios estão preenchidos
+      const todosPreenchidos = camposObrigatorios.every(
+        (valor) => valor !== ""
+      );
+
+      if (!todosPreenchidos) {
+        throw new Error(
+          `Endereço ${numero}: Se você preencher algum campo, todos os campos obrigatórios devem ser preenchidos!`
+        );
+      }
+
+      // Adicionar endereço à lista
+      enderecos.push({
+        name: `${
+          document.getElementById(`tipoEndereco${numero}`).value
+        } - ${logradouro}`,
+        residenceType: document.getElementById(`tipoEndereco${numero}`).value,
+        streetType:
+          document.getElementById(`tipoLogradouro${numero}`).value || "Rua",
+        street: logradouro,
+        number: numeroEndereco,
+        district: bairro,
+        cep: cep.replace(/\D/g, ""),
+        city: cidade,
+        state: estado,
+        country: document.getElementById(`pais${numero}`).value || "Brasil",
+        observations:
+          document.getElementById(`observacoes${numero}`).value || "",
+        isBilling:
+          document.getElementById(`enderecoCobranca${numero}`)?.checked ||
+          false,
+        isDelivery:
+          document.getElementById(`enderecoEntrega${numero}`)?.checked || false,
+      });
+    }
+  });
+
+  return enderecos;
+}
+
+// Função para adicionar novo endereço
+function adicionarEndereco() {
+  contadorEnderecos++;
+  const container = document.getElementById("enderecosContainer");
+
+  const novoEndereco = document.createElement("div");
+  novoEndereco.className = "endereco-item";
+  novoEndereco.setAttribute("data-endereco", contadorEnderecos);
+
+  novoEndereco.innerHTML = `
+    <div class="endereco-header">
+      <h4>Endereço ${contadorEnderecos}</h4>
+      <button type="button" class="btn-remove-endereco" onclick="removerEndereco(${contadorEnderecos})">
+        🗑️ Remover
+      </button>
+    </div>
+
+    <label for="tipoEndereco${contadorEnderecos}">Tipo de endereço*</label>
+    <select id="tipoEndereco${contadorEnderecos}" required>
+      <option value="">Selecione</option>
+      <option value="Casa">Casa</option>
+      <option value="Apartamento">Apartamento</option>
+      <option value="Kitnet">Kitnet</option>
+      <option value="Sobrado">Sobrado</option>
+      <option value="Cobertura">Cobertura</option>
+      <option value="Studio">Studio</option>
+    </select>
+
+    <label for="tipoLogradouro${contadorEnderecos}">Tipo de logradouro*</label>
+    <select id="tipoLogradouro${contadorEnderecos}" required>
+      <option value="">Selecione</option>
+      <option value="Rua">Rua</option>
+      <option value="Avenida">Avenida</option>
+      <option value="Travessa">Travessa</option>
+      <option value="Alameda">Alameda</option>
+      <option value="Praça">Praça</option>
+      <option value="Estrada">Estrada</option>
+      <option value="Rodovia">Rodovia</option>
+    </select>
+
+    <label for="logradouro${contadorEnderecos}">Logradouro*</label>
+    <input type="text" id="logradouro${contadorEnderecos}" required />
+
+    <label for="numero${contadorEnderecos}">Número*</label>
+    <input type="text" id="numero${contadorEnderecos}" required />
+
+    <label for="bairro${contadorEnderecos}">Bairro*</label>
+    <input type="text" id="bairro${contadorEnderecos}" required />
+
+    <label for="cep${contadorEnderecos}">CEP*</label>
+    <input type="text" id="cep${contadorEnderecos}" required />
+
+    <label for="cidade${contadorEnderecos}">Cidade*</label>
+    <input type="text" id="cidade${contadorEnderecos}" required />
+
+    <label for="estado${contadorEnderecos}">Estado*</label>
+    <select id="estado${contadorEnderecos}" required>
+      <option value="">Selecione</option>
+      <option value="AC">Acre</option>
+      <option value="AL">Alagoas</option>
+      <option value="AP">Amapá</option>
+      <option value="AM">Amazonas</option>
+      <option value="BA">Bahia</option>
+      <option value="CE">Ceará</option>
+      <option value="DF">Distrito Federal</option>
+      <option value="ES">Espírito Santo</option>
+      <option value="GO">Goiás</option>
+      <option value="MA">Maranhão</option>
+      <option value="MT">Mato Grosso</option>
+      <option value="MS">Mato Grosso do Sul</option>
+      <option value="MG">Minas Gerais</option>
+      <option value="PA">Pará</option>
+      <option value="PB">Paraíba</option>
+      <option value="PR">Paraná</option>
+      <option value="PE">Pernambuco</option>
+      <option value="PI">Piauí</option>
+      <option value="RJ">Rio de Janeiro</option>
+      <option value="RN">Rio Grande do Norte</option>
+      <option value="RS">Rio Grande do Sul</option>
+      <option value="RO">Rondônia</option>
+      <option value="RR">Roraima</option>
+      <option value="SC">Santa Catarina</option>
+      <option value="SP">São Paulo</option>
+      <option value="SE">Sergipe</option>
+      <option value="TO">Tocantins</option>
+    </select>
+
+    <label for="pais${contadorEnderecos}">País*</label>
+    <input type="text" id="pais${contadorEnderecos}" value="Brasil" required />
+
+    <label for="observacoes${contadorEnderecos}">Complemento</label>
+    <input type="text" id="observacoes${contadorEnderecos}" />
+
+    <div class="checkbox-group">
+      <label>
+        <input type="checkbox" id="enderecoCobranca${contadorEnderecos}" />
+        Endereço de cobrança
+      </label>
+      <label>
+        <input type="checkbox" id="enderecoEntrega${contadorEnderecos}" />
+        Endereço de entrega
+      </label>
+    </div>
+  `;
+
+  container.appendChild(novoEndereco);
+
+  // Adicionar máscaras para os novos campos
+  adicionarMascarasEndereco(contadorEnderecos);
+
+  // Atualizar numeração dos endereços
+  atualizarNumeracaoEnderecos();
+}
+
+// Função para remover endereço
+function removerEndereco(numeroEndereco) {
+  const enderecoItem = document.querySelector(
+    `[data-endereco="${numeroEndereco}"]`
+  );
+  if (enderecoItem) {
+    enderecoItem.remove();
+    atualizarNumeracaoEnderecos();
+  }
+}
+
+// Função para atualizar numeração dos endereços
+function atualizarNumeracaoEnderecos() {
+  const enderecoItems = document.querySelectorAll(".endereco-item");
+  enderecoItems.forEach((item, index) => {
+    const novoNumero = index + 1;
+    item.setAttribute("data-endereco", novoNumero);
+
+    // Atualizar título
+    const titulo = item.querySelector("h4");
+    titulo.textContent = `Endereço ${novoNumero}`;
+
+    // Atualizar onclick do botão remover
+    const btnRemover = item.querySelector(".btn-remove-endereco");
+    btnRemover.setAttribute("onclick", `removerEndereco(${novoNumero})`);
+
+    // Atualizar IDs dos campos
+    const campos = item.querySelectorAll("input, select, label");
+    campos.forEach((campo) => {
+      if (campo.id) {
+        const novoId = campo.id.replace(/\d+$/, novoNumero);
+        campo.id = novoId;
+      }
+      if (campo.getAttribute("for")) {
+        const novoFor = campo.getAttribute("for").replace(/\d+$/, novoNumero);
+        campo.setAttribute("for", novoFor);
+      }
+    });
+  });
+
+  // Mostrar/esconder botão remover do primeiro endereço
+  const primeiroEndereco = document.querySelector(".endereco-item");
+  const btnRemoverPrimeiro = primeiroEndereco?.querySelector(
+    ".btn-remove-endereco"
+  );
+  if (btnRemoverPrimeiro) {
+    btnRemoverPrimeiro.style.display =
+      enderecoItems.length > 1 ? "block" : "none";
+  }
+}
+
+// Função para adicionar máscaras aos campos de endereço
+function adicionarMascarasEndereco(numero) {
+  // Máscara para CEP
+  const cepInput = document.getElementById(`cep${numero}`);
+  if (cepInput) {
+    cepInput.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      value = value.replace(/(\d{5})(\d)/, "$1-$2");
+      e.target.value = value;
+    });
+  }
+}
+
+/**********************************
  * INICIALIZAÇÃO AUTOMÁTICA
  **********************************/
 document.addEventListener("DOMContentLoaded", () => {
@@ -1284,6 +1574,15 @@ document.addEventListener("DOMContentLoaded", () => {
   listarEnderecos();
   listarCartoes();
   carregarClientesSelect();
+
+  // Event listener para botão de adicionar endereço
+  const btnAdicionarEndereco = document.getElementById("btnAdicionarEndereco");
+  if (btnAdicionarEndereco) {
+    btnAdicionarEndereco.addEventListener("click", adicionarEndereco);
+  }
+
+  // Adicionar máscaras para o primeiro endereço
+  adicionarMascarasEndereco(1);
 
   // Máscara para número do cartão
   const numeroCartaoInput = document.getElementById("numeroCartao");

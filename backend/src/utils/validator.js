@@ -129,7 +129,7 @@ const clientSchema = Joi.object({
       "string.pattern.base":
         "Senha deve conter ao menos: 1 letra minúscula, 1 maiúscula, 1 número e 1 caractere especial",
     }),
-  passwordConfirm: Joi.any().valid(Joi.ref("password")).required().messages({
+  passwordConfirm: Joi.any().valid(Joi.ref("password")).optional().messages({
     "any.only": "Confirmação de senha deve ser igual à senha",
   }),
   ranking: Joi.number().integer().min(0).max(100).default(0),
@@ -147,7 +147,7 @@ const clientSchema = Joi.object({
           }),
         streetType: Joi.string()
           .valid(...STREET_TYPES)
-          .required()
+          .default("Rua")
           .messages({
             "any.only": `Tipo de logradouro deve ser: ${STREET_TYPES.join(
               ", "
@@ -157,10 +157,10 @@ const clientSchema = Joi.object({
         number: Joi.string().max(10).required(),
         district: Joi.string().min(2).max(50).required(),
         cep: Joi.string()
-          .pattern(/^\d{5}-?\d{3}$/)
+          .pattern(/^\d{8}$/)
           .required()
           .messages({
-            "string.pattern.base": "CEP deve ter formato 12345-678 ou 12345678",
+            "string.pattern.base": "CEP deve ter formato 12345678 (8 dígitos)",
           }),
         city: Joi.string().min(2).max(50).required(),
         state: Joi.string()
@@ -244,12 +244,12 @@ const addressSchema = Joi.object({
     .required(),
   streetType: Joi.string()
     .valid(...STREET_TYPES)
-    .required(),
+    .default("Rua"),
   street: Joi.string().min(5).max(100).required(),
   number: Joi.string().max(10).required(),
   district: Joi.string().min(2).max(50).required(),
   cep: Joi.string()
-    .pattern(/^\d{5}-?\d{3}$/)
+    .pattern(/^\d{8}$/)
     .required(),
   city: Joi.string().min(2).max(50).required(),
   state: Joi.string()
