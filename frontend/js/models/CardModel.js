@@ -202,3 +202,5 @@ class CardModel {
 window.CardModel = new CardModel();
 
 
+
+

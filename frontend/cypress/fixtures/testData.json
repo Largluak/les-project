@@ -1,0 +1,101 @@
+{
+  "clients": {
+    "validClient": {
+      "name": "João Silva Santos",
+      "gender": "Masculino",
+      "birthDate": "1990-05-15",
+      "cpf": "11144477735",
+      "phone": "11987654321",
+      "email": "joao.silva@email.com",
+      "password": "MinhaSenh@123",
+      "passwordConfirm": "MinhaSenh@123"
+    },
+    "validClient2": {
+      "name": "Maria Oliveira Costa",
+      "gender": "Feminino",
+      "birthDate": "1985-08-22",
+      "cpf": "22255588836",
+      "phone": "11912345678",
+      "email": "maria.oliveira@email.com",
+      "password": "SenhaSegur@456",
+      "passwordConfirm": "SenhaSegur@456"
+    },
+    "invalidClient": {
+      "name": "",
+      "gender": "",
+      "birthDate": "",
+      "cpf": "123",
+      "phone": "123",
+      "email": "email-invalido",
+      "password": "123",
+      "passwordConfirm": "456"
+    }
+  },
+  "addresses": {
+    "billingAddress": {
+      "residenceType": "Casa",
+      "streetType": "Rua",
+      "street": "Rua das Flores",
+      "number": "123",
+      "district": "Centro",
+      "cep": "01234567",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "Brasil",
+      "observations": "Casa térrea",
+      "isBilling": true,
+      "isDelivery": false
+    },
+    "deliveryAddress": {
+      "residenceType": "Apartamento",
+      "streetType": "Avenida",
+      "street": "Avenida Paulista",
+      "number": "1000",
+      "district": "Bela Vista",
+      "cep": "01310100",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "Brasil",
+      "observations": "Apartamento 45",
+      "isBilling": false,
+      "isDelivery": true
+    },
+    "multiplePurposeAddress": {
+      "residenceType": "Sobrado",
+      "streetType": "Rua",
+      "street": "Rua da Consolação",
+      "number": "456",
+      "district": "Consolação",
+      "cep": "01302000",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "Brasil",
+      "observations": "Sobrado com garagem",
+      "isBilling": true,
+      "isDelivery": true
+    },
+    "updatedAddress": {
+      "residenceType": "Casa",
+      "streetType": "Rua",
+      "street": "Rua das Palmeiras",
+      "number": "789",
+      "district": "Jardins",
+      "cep": "01452000",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "Brasil",
+      "observations": "Casa com quintal",
+      "isBilling": true,
+      "isDelivery": true
+    }
+  },
+  "editClient": {
+    "updatedData": {
+      "name": "João Silva Santos Atualizado",
+      "email": "joao.atualizado@email.com",
+      "phone": "11999888777",
+      "ranking": "5",
+      "status": "Ativo"
+    }
+  }
+}
