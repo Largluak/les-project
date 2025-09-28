@@ -1,0 +1,306 @@
+@startuml DiagramaSequenciaFluxos
+
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 200
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+title Diagrama de Sequência - Fluxos CRUD de Clientes
+
+' ============ PARTICIPANTES ============
+
+box "Frontend"
+    actor Usuario as user
+    participant "ClientView" as view
+    participant "ClientController" as frontCtrl
+end box
+
+box "Backend API"
+    participant "Express Router" as router
+    participant "ClientsController" as backCtrl
+    participant "Validator" as validator
+    participant "ClientsService" as service
+end box
+
+box "Data Layer"
+    participant "ClientModel" as model
+    participant "Database" as db
+end box
+
+box "Error Handling"
+    participant "ErrorHandler" as errorHandler
+end box
+
+' ============ FLUXO 1: CRIAR CLIENTE ============
+
+== Fluxo 1: Criar Cliente ==
+
+user -> view : Preenche formulário e clica "Criar"
+activate view
+
+view -> frontCtrl : createClient(clientData)
+activate frontCtrl
+
+frontCtrl -> frontCtrl : validateClientData(clientData)
+note right : Validacao no frontend
+
+frontCtrl -> router : POST /api/clients
+activate router
+
+router -> backCtrl : createClient(req, res, next)
+activate backCtrl
+
+backCtrl -> validator : clientSchema.validateAsync(payload)
+activate validator
+validator --> backCtrl : validation result
+deactivate validator
+
+alt **Validação OK**
+    backCtrl -> model : create(clientData)
+    activate model
+    
+    model -> db : prisma.client.create()
+    activate db
+    db --> model : client created
+    deactivate db
+    
+    model --> backCtrl : client
+    deactivate model
+    
+    backCtrl --> router : 201 - Client created
+    deactivate backCtrl
+    
+    router --> frontCtrl : HTTP 201 + client data
+    deactivate router
+    
+    frontCtrl --> view : {success: true, data: client}
+    deactivate frontCtrl
+    
+    view -> view : showSuccess("Cliente criado!")
+    view --> user : Exibe mensagem de sucesso
+    
+else **Erro de Validação**
+    validator --> backCtrl : validation error
+    backCtrl --> router : 400 - Validation error
+    router --> frontCtrl : HTTP 400 + error
+    frontCtrl --> view : {success: false, error: message}
+    view -> view : showError(error)
+    view --> user : Exibe erro
+end
+
+deactivate view
+
+' ============ FLUXO 2: LISTAR CLIENTES ============
+
+== Fluxo 2: Listar Clientes ==
+
+user -> view : Acessa página de clientes
+activate view
+
+view -> view : loadClients()
+
+view -> frontCtrl : getClients(filters)
+activate frontCtrl
+
+frontCtrl -> router : GET /api/clients?filters
+activate router
+
+router -> backCtrl : listClients(req, res, next)
+activate backCtrl
+
+backCtrl -> model : findAll(filters)
+activate model
+
+model -> db : prisma.client.findMany()
+activate db
+db --> model : clients array + count
+deactivate db
+
+model --> backCtrl : {clients, pagination}
+deactivate model
+
+backCtrl --> router : 200 + clients data
+deactivate backCtrl
+
+router --> frontCtrl : HTTP 200 + clients
+deactivate router
+
+frontCtrl --> view : {success: true, data: result}
+deactivate frontCtrl
+
+view -> view : renderClientsList(data)
+view --> user : Exibe lista de clientes
+
+deactivate view
+
+' ============ FLUXO 3: ATUALIZAR CLIENTE ============
+
+== Fluxo 3: Atualizar Cliente ==
+
+user -> view : Clica "Editar" no cliente
+activate view
+
+view -> frontCtrl : getClientById(id)
+activate frontCtrl
+
+frontCtrl -> router : GET /api/clients/{id}
+activate router
+
+router -> backCtrl : getClientById(req, res, next)
+activate backCtrl
+
+backCtrl -> model : findById(id)
+activate model
+
+model -> db : prisma.client.findUnique()
+activate db
+db --> model : client data
+deactivate db
+
+model --> backCtrl : client
+deactivate model
+
+backCtrl --> router : 200 + client data
+deactivate backCtrl
+
+router --> frontCtrl : HTTP 200 + client
+deactivate router
+
+frontCtrl --> view : {success: true, data: client}
+deactivate frontCtrl
+
+view -> view : showEditForm(client)
+view --> user : Exibe formulário preenchido
+
+user -> view : Modifica dados e salva
+view -> frontCtrl : updateClient(id, updateData)
+activate frontCtrl
+
+frontCtrl -> router : PUT /api/clients/{id}
+activate router
+
+router -> backCtrl : updateClient(req, res, next)
+activate backCtrl
+
+backCtrl -> validator : validate update data
+activate validator
+validator --> backCtrl : validation OK
+deactivate validator
+
+backCtrl -> model : update(id, updateData)
+activate model
+
+model -> db : prisma.client.update()
+activate db
+db --> model : updated client
+deactivate db
+
+model --> backCtrl : client
+deactivate model
+
+backCtrl --> router : 200 + updated client
+deactivate backCtrl
+
+router --> frontCtrl : HTTP 200 + client
+deactivate router
+
+frontCtrl --> view : {success: true, data: client}
+deactivate frontCtrl
+
+view -> view : showSuccess("Cliente atualizado!")
+view --> user : Confirma atualização
+
+deactivate view
+
+' ============ FLUXO 4: DELETAR CLIENTE ============
+
+== Fluxo 4: Deletar Cliente ==
+
+user -> view : Clica "Excluir" e confirma
+activate view
+
+view -> frontCtrl : deleteClient(id)
+activate frontCtrl
+
+frontCtrl -> router : DELETE /api/clients/{id}
+activate router
+
+router -> backCtrl : deleteClient(req, res, next)
+activate backCtrl
+
+backCtrl -> model : delete(id)
+activate model
+
+model -> db : prisma.transaction([...])
+note right : Delete cascata:\n- Transacoes\n- Cartoes\n- Enderecos\n- Cliente
+activate db
+db --> model : deletion result
+deactivate db
+
+model --> backCtrl : removed data
+deactivate model
+
+backCtrl --> router : 200 + deletion info
+deactivate backCtrl
+
+router --> frontCtrl : HTTP 200 + result
+deactivate router
+
+frontCtrl --> view : {success: true, data: result}
+deactivate frontCtrl
+
+view -> view : showSuccess("Cliente excluído!")
+view -> view : loadClients()
+note right : Recarrega lista
+view --> user : Confirma exclusão e atualiza lista
+
+deactivate view
+
+' ============ FLUXO 5: TRATAMENTO DE ERRO ============
+
+== Fluxo 5: Tratamento de Erro ==
+
+user -> view : Ação que gera erro
+activate view
+
+view -> frontCtrl : qualquerOperacao()
+activate frontCtrl
+
+frontCtrl -> router : HTTP Request
+activate router
+
+router -> backCtrl : controller method
+activate backCtrl
+
+backCtrl -> model : model operation
+activate model
+
+model -> db : database operation
+activate db
+db --> model : ❌ Database Error
+deactivate db
+
+model --> backCtrl : ❌ Error thrown
+deactivate model
+
+backCtrl --> errorHandler : next(error)
+activate errorHandler
+
+errorHandler -> errorHandler : Analisa tipo de erro
+note right : - Joi validation\n- Prisma errors\n- Generic errors
+
+errorHandler --> router : Formatted error response
+deactivate errorHandler
+
+router --> frontCtrl : HTTP 500 + error details
+deactivate router
+deactivate backCtrl
+
+frontCtrl --> view : {success: false, error: message}
+deactivate frontCtrl
+
+view -> view : showError(error)
+view --> user : Exibe mensagem de erro
+deactivate view
+
+@enduml

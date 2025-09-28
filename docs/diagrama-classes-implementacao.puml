@@ -1,0 +1,219 @@
+@startuml DiagramaClassesImplementacao
+
+skinparam linetype ortho
+skinparam padding 3
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 10
+skinparam packageStyle rectangle
+skinparam minClassWidth 150
+skinparam nodeSpacing 50
+skinparam rankSpacing 60
+
+package "Backend Controllers" {
+    class ClientsController {
+        +createClient(req, res, next): Promise<void>
+        +listClients(req, res, next): Promise<void>
+        +getClientById(req, res, next): Promise<void>
+        +updateClient(req, res, next): Promise<void>
+        +changePassword(req, res, next): Promise<void>
+        +inactivateClient(req, res, next): Promise<void>
+        +deleteClient(req, res, next): Promise<void>
+        +addAddress(req, res, next): Promise<void>
+        +updateAddress(req, res, next): Promise<void>
+        +removeAddress(req, res, next): Promise<void>
+        +addCard(req, res, next): Promise<void>
+        +setPreferredCard(req, res, next): Promise<void>
+        +updateCard(req, res, next): Promise<void>
+        +removeCard(req, res, next): Promise<void>
+        +listTransactions(req, res, next): Promise<void>
+        +getDashboardStats(req, res): Promise<void>
+        +toggleClientStatus(req, res): Promise<void>
+        +updateRanking(req, res): Promise<void>
+    }
+}
+
+package "Backend Services" {
+    class ClientsService {
+        -prisma: PrismaClient
+        -SALT_ROUNDS: number
+        
+        +createClient(clientData): Promise<Client>
+        +listClients(filters): Promise<{clients, pagination}>
+        +getClientById(id): Promise<Client>
+        +updateClient(id, updateData): Promise<Client>
+        +deleteClient(id): Promise<Object>
+        +changePassword(id, oldPassword, newPassword): Promise<Object>
+        +addAddress(clientId, addressData): Promise<Address>
+        +updateAddress(addressId, addressData): Promise<Address>
+        +addCard(clientId, cardData): Promise<Card>
+        +updateCard(cardId, cardData): Promise<Card>
+        +inactivateClient(id): Promise<Client>
+        +calculateInitialRanking(clientData): number
+    }
+}
+
+package "Backend Configuration" {
+    class AppConfig {
+        -app: Express
+        
+        +constructor()
+        +setupMiddleware(): void
+        +getApp(): Express
+    }
+    
+    class RoutesConfig {
+        -app: Express
+        
+        +constructor(app: Express)
+        +setupRoutes(): void
+    }
+}
+
+package "Backend Middlewares" {
+    class ErrorHandler {
+        +handle(err, req, res, next): void
+        -isJoiError(err): boolean
+        -handleValidationError(err, res): void
+        -handleInternalError(err, res): void
+    }
+}
+
+package "Backend Validators" {
+    class Validator {
+        +clientSchema: JoiSchema
+        +passwordSchema: JoiSchema
+        +addressSchema: JoiSchema
+        +cardSchema: JoiSchema
+        +phoneSchema: JoiSchema
+        
+        -ALLOWED_BRANDS: string[]
+        -RESIDENCE_TYPES: string[]
+        -STREET_TYPES: string[]
+        -BR_STATES: string[]
+        
+        +validateCPF(cpf): boolean
+        +validateCEP(cep): boolean
+        +validateCardNumber(number): boolean
+    }
+}
+
+package "Frontend Controllers" {
+    class ClientController {
+        -clientModel: ClientModel
+        -addressModel: AddressModel
+        -cardModel: CardModel
+        
+        +createClient(clientData): Promise<{success, data, error}>
+        +getClients(filters): Promise<{success, data, error}>
+        +getClientById(id): Promise<{success, data, error}>
+        +updateClient(id, updateData): Promise<{success, data, error}>
+        +deleteClient(id): Promise<{success, data, error}>
+        +changePassword(id, passwordData): Promise<{success, data, error}>
+        +toggleClientStatus(id): Promise<{success, data, error}>
+        +updateRanking(id): Promise<{success, data, error}>
+        +getDashboardStats(): Promise<{success, data, error}>
+        +validateClientData(clientData, isUpdate): {isValid, errors}
+        +validatePasswordData(passwordData): {isValid, errors}
+        +validateAddresses(addresses): {isValid, errors}
+        +validateCards(cards): {isValid, errors}
+    }
+}
+
+package "Frontend Views" {
+    class ClientView {
+        -clientController: ClientController
+        -elements: Object
+        -currentClient: Object
+        
+        +init(elements): void
+        +setupEventListeners(): void
+        +loadClients(): Promise<void>
+        +searchClients(): Promise<void>
+        +getFilters(): Object
+        +renderClientsList(data): void
+        +renderClientItem(client): string
+        +renderPagination(pagination): string
+        +loadPage(page): Promise<void>
+        +viewClient(id): Promise<void>
+        +showClientDetails(client): void
+        +editClient(id): Promise<void>
+        +showEditForm(client): void
+        +deleteClient(id): Promise<void>
+        +showCreateForm(): void
+        +showLoading(): void
+        +hideLoading(): void
+        +showError(message): void
+        +showSuccess(message): void
+    }
+}
+
+package "HTTP Infrastructure" {
+    interface Express {
+        +use(middleware): void
+        +get(path, handler): void
+        +post(path, handler): void
+        +put(path, handler): void
+        +delete(path, handler): void
+        +patch(path, handler): void
+    }
+    
+    interface Router {
+        +get(path, handler): void
+        +post(path, handler): void
+        +put(path, handler): void
+        +delete(path, handler): void
+        +patch(path, handler): void
+    }
+    
+    interface Request {
+        +body: Object
+        +params: Object
+        +query: Object
+        +headers: Object
+    }
+    
+    interface Response {
+        +json(data): Response
+        +status(code): Response
+        +send(data): Response
+    }
+}
+
+' ========== RELACIONAMENTOS ==========
+
+' Backend Configuration Flow
+AppConfig --> Express : configures
+RoutesConfig --> Express : configures
+RoutesConfig --> ClientsController : registers routes to
+ClientsController --> ClientsService : uses
+
+' Backend Validation & Error Handling
+ClientsController --> Validator : validates with
+ClientsController --> ErrorHandler : error handled by
+
+' Frontend Flow
+ClientView --> ClientController : uses
+ClientController -[#blue]-> ClientsController : HTTP requests
+
+' HTTP Infrastructure
+ClientsController --> Request : receives
+ClientsController --> Response : sends
+ErrorHandler --> Response : sends errors
+
+' Dependencies (dashed lines)
+RoutesConfig ..> Router : uses
+ClientsController ..> Request : uses
+ClientsController ..> Response : uses
+
+' Layout hints for better organization
+AppConfig -[hidden]-> RoutesConfig
+ClientsService -[hidden]-> ErrorHandler
+Validator -[hidden]-> ClientController
+
+note top of ClientsController : Controlador REST principal\nGerencia todas as operações CRUD
+note top of ClientController : Controlador do frontend\nGerencia lógica de negócio do cliente
+note top of ClientView : View do frontend\nGerencia interface e eventos DOM
+note right of AppConfig : Configuração da aplicação Express\nMiddlewares de segurança e CORS
+note left of Validator : Validação de dados usando Joi\nEsquemas para todas as entidades
+
+@enduml

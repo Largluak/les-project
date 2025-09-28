@@ -1,0 +1,185 @@
+@startuml DiagramaCasosUsoSimples
+
+skinparam linetype ortho
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor lightblue
+    BorderColor darkblue
+    ArrowColor darkblue
+}
+skinparam package {
+    BackgroundColor lightgray
+    BorderColor black
+}
+skinparam note {
+    BackgroundColor lightyellow
+    BorderColor orange
+}
+skinparam arrow {
+    Color black
+}
+
+title Diagrama de Casos de Uso - Sistema de Gerenciamento de Clientes
+
+' ============ ATORES ============
+
+actor "Administrador" as admin #lightgreen
+actor "Funcionario" as funcionario #lightblue  
+actor "Sistema" as sistema #lightyellow
+
+' Posicionamento dos atores
+admin -[hidden]- funcionario
+funcionario -[hidden]- sistema
+
+' ============ CASOS DE USO PRINCIPAIS ============
+
+package "Gerenciamento de Clientes" {
+    usecase "Cadastrar Cliente" as UC01
+    usecase "Consultar Cliente" as UC02
+    usecase "Listar Clientes" as UC03
+    usecase "Atualizar Cliente" as UC04
+    usecase "Inativar Cliente" as UC05
+    usecase "Excluir Cliente" as UC06
+    usecase "Alterar Senha Cliente" as UC07
+    usecase "Consultar Historico Cliente" as UC08
+}
+
+package "Gerenciamento de Enderecos" {
+    usecase "Cadastrar Endereco" as UC09
+    usecase "Atualizar Endereco" as UC10
+    usecase "Remover Endereco" as UC11
+    usecase "Validar Enderecos Obrigatorios" as UC12
+}
+
+package "Gerenciamento de Cartoes" {
+    usecase "Cadastrar Cartao" as UC13
+    usecase "Atualizar Cartao" as UC14
+    usecase "Remover Cartao" as UC15
+    usecase "Definir Cartao Preferencial" as UC16
+    usecase "Validar Cartao" as UC17
+}
+
+package "Relatorios e Analytics" {
+    usecase "Gerar Estatisticas Dashboard" as UC18
+    usecase "Consultar Transacoes Cliente" as UC19
+    usecase "Atualizar Ranking Cliente" as UC20
+    usecase "Relatorio Clientes Ativos/Inativos" as UC21
+}
+
+package "Validacao e Seguranca" {
+    usecase "Validar Dados Cliente" as UC22
+    usecase "Validar CPF" as UC23
+    usecase "Validar Email" as UC24
+    usecase "Criptografar Senha" as UC25
+    usecase "Tratar Erros" as UC26
+}
+
+' ============ RELACIONAMENTOS DOS ATORES ============
+
+' Administrador - Acesso total
+admin --> UC01 : <<acesso total>>
+admin --> UC02
+admin --> UC03
+admin --> UC04
+admin --> UC05
+admin --> UC06
+admin --> UC07
+admin --> UC08
+admin --> UC18
+admin --> UC19
+admin --> UC20
+admin --> UC21
+
+' Funcionario - Operacoes basicas
+funcionario --> UC01 : <<operacoes basicas>>
+funcionario --> UC02
+funcionario --> UC03
+funcionario --> UC04
+funcionario --> UC07
+funcionario --> UC08
+funcionario --> UC09
+funcionario --> UC10
+funcionario --> UC13
+funcionario --> UC14
+funcionario --> UC16
+funcionario --> UC19
+
+' Sistema - Operacoes automaticas
+sistema --> UC12 : <<automatico>>
+sistema --> UC17
+sistema --> UC20
+sistema --> UC22
+sistema --> UC23
+sistema --> UC24
+sistema --> UC25
+sistema --> UC26
+
+' ============ RELACIONAMENTOS INCLUDE ============
+
+' Validações para Cadastro e Atualização de Cliente
+UC01 ..> UC22 : <<include>>\nValidar Dados
+UC01 ..> UC23 : <<include>>\nValidar CPF
+UC01 ..> UC24 : <<include>>\nValidar Email
+UC01 ..> UC25 : <<include>>\nCriptografar Senha
+
+UC04 ..> UC22 : <<include>>\nValidar Dados
+UC04 ..> UC23 : <<include>>\nValidar CPF
+UC04 ..> UC24 : <<include>>\nValidar Email
+
+' Alteração de Senha
+UC07 ..> UC25 : <<include>>\nCriptografar Senha
+
+' Validações de Endereço
+UC09 ..> UC12 : <<include>>\nValidar Obrigatorios
+UC10 ..> UC12 : <<include>>\nValidar Obrigatorios
+UC11 ..> UC12 : <<include>>\nValidar Obrigatorios
+
+' Validações de Cartão
+UC13 ..> UC17 : <<include>>\nValidar Cartão
+UC14 ..> UC17 : <<include>>\nValidar Cartão
+
+' Relatórios
+UC18 ..> UC21 : <<include>>\nRelatório Status
+
+' ============ RELACIONAMENTOS EXTEND ============
+
+' Extensões de Endereços
+UC09 ..> UC01 : <<extend>>\nAdicionar Endereço
+UC10 ..> UC04 : <<extend>>\nAtualizar Endereço
+UC11 ..> UC05 : <<extend>>\nRemover Endereço
+
+' Extensões de Cartões
+UC13 ..> UC01 : <<extend>>\nAdicionar Cartão
+UC14 ..> UC04 : <<extend>>\nAtualizar Cartão
+UC15 ..> UC05 : <<extend>>\nRemover Cartão
+UC16 ..> UC13 : <<extend>>\nDefinir Preferencial
+
+' Analytics
+UC20 ..> UC19 : <<extend>>\nCalcular Ranking
+
+' Tratamento de Erros
+UC26 ..> UC01 : <<extend>>\nTratar Erro
+UC26 ..> UC02 : <<extend>>\nTratar Erro
+UC26 ..> UC04 : <<extend>>\nTratar Erro
+UC26 ..> UC05 : <<extend>>\nTratar Erro
+UC26 ..> UC06 : <<extend>>\nTratar Erro
+
+' ============ NOTAS EXPLICATIVAS ============
+
+note right of UC01 : Cadastro Completo\n• Inclui endereços opcionais\n• Inclui cartões opcionais\n• Validações automáticas
+
+note bottom of UC05 : Inativação vs Exclusão\n• Inativa ao invés de excluir\n• Mantém histórico completo\n• Preserva integridade referencial
+
+note right of UC06 : Exclusão Física\n• Remove registro permanentemente\n• Remoção em cascata\n• Ação irreversível
+
+note bottom of UC12 : Validação de Endereços\n• Mínimo 1 endereço de cobrança\n• Mínimo 1 endereço de entrega\n• Validação automática
+
+note right of UC17 : Validação de Cartão\n• Número do cartão\n• CVV\n• Data de validade\n• Bandeira do cartão
+
+note bottom of UC20 : Cálculo de Ranking\n• Total gasto pelo cliente\n• Número de transações\n• Tempo como cliente\n• Frequência de compras
+
+note left of UC22 : Validação de Dados\n• Esquemas Joi\n• Validação em tempo real\n• Mensagens de erro claras
+
+note bottom of UC26 : Tratamento de Erros\n• Centralizado no sistema\n• Logs detalhados\n• Recuperação automática
+
+@enduml
