@@ -3,223 +3,129 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carrinho - Sistema de Vendas</title>
+    <title>Carrinho de Compras - Sistema de Vendas</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header>
-      <h1>Sistema de Vendas de Livros</h1>
-      <nav>
-        <a href="index.html">Início</a>
-        <a href="produtos.html">Produtos</a>
-        <a href="carrinho.html" class="ativo"
-          >Carrinho (<span id="contador-carrinho">0</span>)</a
-        >
-        <a href="pedidos.html">Meus Pedidos</a>
-        <a href="adminVendas.html">Administração</a>
-      </nav>
-    </header>
-
-    <main>
-      <h2>Carrinho de Compras</h2>
-
-      <div id="carrinho-vazio" class="mensagem-vazia" style="display: none">
-        <p>Seu carrinho está vazio!</p>
-        <a href="produtos.html" class="btn btn-primary">Continuar Comprando</a>
-      </div>
-
-      <div id="carrinho-conteudo">
-        <div id="itens-carrinho">
-          <!-- Itens do carrinho serão carregados aqui -->
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <h1><i class="fas fa-shopping-cart"></i> Carrinho de Compras</h1>
+          <nav class="nav">
+            <a href="index.html" class="nav-link"
+              ><i class="fas fa-home"></i> Início</a
+            >
+            <a href="produtos.html" class="nav-link"
+              ><i class="fas fa-box"></i> Produtos</a
+            >
+            <a href="carrinho.html" class="nav-link active"
+              ><i class="fas fa-shopping-cart"></i> Carrinho</a
+            >
+            <a href="pedidos.html" class="nav-link"
+              ><i class="fas fa-list"></i> Pedidos</a
+            >
+          </nav>
         </div>
+      </header>
 
-        <div class="resumo-carrinho">
-          <h3>Resumo do Pedido</h3>
-          <div class="linha-resumo">
-            <span>Subtotal:</span>
-            <span id="subtotal">R$ 0,00</span>
-          </div>
-          <div class="linha-resumo">
-            <span>Frete:</span>
-            <span id="valor-frete">Calcular</span>
-          </div>
-          <div class="linha-resumo total">
-            <span>Total:</span>
-            <span id="total">R$ 0,00</span>
-          </div>
-
-          <button class="btn btn-secondary" onclick="calcularFrete()">
-            Calcular Frete
-          </button>
-          <button
-            class="btn btn-primary"
-            onclick="finalizarCompra()"
-            id="btn-finalizar"
-          >
-            Finalizar Compra
-          </button>
-        </div>
-      </div>
-
-      <!-- Modal para cálculo de frete -->
-      <div id="modal-frete" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <h3>Calcular Frete</h3>
-          <form id="form-frete">
-            <label for="cep">CEP de Entrega:</label>
-            <input type="text" id="cep" required placeholder="00000-000" />
-            <button type="submit" class="btn btn-primary">Calcular</button>
-          </form>
-        </div>
-      </div>
-
-      <!-- Modal para finalizar compra -->
-      <div id="modal-checkout" class="modal">
-        <div class="modal-content modal-large">
-          <span class="close">&times;</span>
-          <h3>Finalizar Compra</h3>
-
-          <div class="checkout-steps">
-            <div class="step active" data-step="1">1. Entrega</div>
-            <div class="step" data-step="2">2. Pagamento</div>
-            <div class="step" data-step="3">3. Confirmação</div>
-          </div>
-
-          <form id="form-checkout">
-            <div id="step-entrega" class="checkout-step active">
-              <h4>Endereço de Entrega</h4>
-              <select id="endereco-selecionado">
-                <option value="">Selecionar endereço</option>
-                <option value="novo">Novo endereço</option>
-              </select>
-
-              <div id="novo-endereco" style="display: none">
-                <input type="text" placeholder="Rua" required />
-                <input type="text" placeholder="Número" required />
-                <input type="text" placeholder="Bairro" required />
-                <input type="text" placeholder="Cidade" required />
-                <input type="text" placeholder="CEP" required />
-                <label>
-                  <input type="checkbox" id="salvar-endereco" />
-                  Salvar este endereço no meu perfil
-                </label>
-              </div>
-
-              <button
-                type="button"
-                class="btn btn-primary"
-                onclick="proximaEtapa(2)"
-              >
-                Continuar
-              </button>
+      <main class="main-content">
+        <div class="cart-container">
+          <!-- Carrinho vazio -->
+          <div id="empty-cart" class="empty-cart" style="display: none">
+            <div class="empty-cart-content">
+              <i class="fas fa-shopping-cart fa-3x"></i>
+              <h2>Seu carrinho está vazio</h2>
+              <p>Adicione alguns produtos para começar suas compras</p>
+              <a href="produtos.html" class="btn btn-primary">
+                <i class="fas fa-shopping-bag"></i> Ver Produtos
+              </a>
             </div>
+          </div>
 
-            <div id="step-pagamento" class="checkout-step">
-              <h4>Forma de Pagamento</h4>
-
-              <div class="pagamento-opcoes">
-                <div class="opcao-pagamento">
-                  <input
-                    type="radio"
-                    id="cartao"
-                    name="pagamento"
-                    value="cartao"
-                  />
-                  <label for="cartao">Cartão de Crédito</label>
-                </div>
-                <div class="opcao-pagamento">
-                  <input
-                    type="radio"
-                    id="cupom"
-                    name="pagamento"
-                    value="cupom"
-                  />
-                  <label for="cupom">Cupom de Troca/Promocional</label>
-                </div>
-              </div>
-
-              <div id="cartao-dados" class="pagamento-detalhes">
-                <select id="cartao-selecionado">
-                  <option value="">Selecionar cartão</option>
-                  <option value="novo">Novo cartão</option>
-                </select>
-
-                <div id="novo-cartao" style="display: none">
-                  <input type="text" placeholder="Número do cartão" required />
-                  <input type="text" placeholder="Nome no cartão" required />
-                  <input type="text" placeholder="MM/AA" required />
-                  <input type="text" placeholder="CVV" required />
-                  <label>
-                    <input type="checkbox" id="salvar-cartao" />
-                    Salvar este cartão no meu perfil
-                  </label>
-                </div>
-              </div>
-
-              <div id="cupom-dados" class="pagamento-detalhes">
-                <select id="cupom-selecionado">
-                  <option value="">Selecionar cupom</option>
-                </select>
-                <input
-                  type="text"
-                  id="codigo-cupom"
-                  placeholder="Código do cupom"
-                />
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  onclick="validarCupom()"
-                >
-                  Validar
+          <!-- Carrinho com itens -->
+          <div id="cart-content" class="cart-content">
+            <div class="cart-header">
+              <h2>Itens no Carrinho</h2>
+              <div class="cart-actions">
+                <button id="clear-cart" class="btn btn-secondary">
+                  <i class="fas fa-trash"></i> Limpar Carrinho
+                </button>
+                <button id="renew-cart" class="btn btn-outline">
+                  <i class="fas fa-refresh"></i> Renovar Carrinho
                 </button>
               </div>
-
-              <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="etapaAnterior(1)"
-              >
-                Voltar
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                onclick="proximaEtapa(3)"
-              >
-                Continuar
-              </button>
             </div>
 
-            <div id="step-confirmacao" class="checkout-step">
-              <h4>Confirmação</h4>
-              <div id="resumo-final">
-                <!-- Resumo será preenchido dinamicamente -->
+            <div class="cart-items" id="cart-items">
+              <!-- Itens serão carregados dinamicamente -->
+            </div>
+
+            <div class="cart-summary">
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="subtotal">R$ 0,00</span>
               </div>
+              <div class="summary-row">
+                <span>Frete:</span>
+                <span id="shipping">R$ 0,00</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total:</span>
+                <span id="total">R$ 0,00</span>
+              </div>
+              <div class="summary-info">
+                <small id="item-count">0 itens</small>
+              </div>
+            </div>
 
-              <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="etapaAnterior(2)"
-              >
-                Voltar
-              </button>
-              <button type="submit" class="btn btn-success">
-                Confirmar Pedido
+            <div class="cart-actions-bottom">
+              <a href="produtos.html" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Continuar Comprando
+              </a>
+              <button id="proceed-checkout" class="btn btn-primary" disabled>
+                <i class="fas fa-credit-card"></i> Finalizar Compra
               </button>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
-    </main>
 
-    <script src="script.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        carregarCarrinho();
-        atualizarContadorCarrinho();
-        inicializarModals();
-      });
-    </script>
+        <!-- Modal de confirmação -->
+        <div id="confirm-modal" class="modal">
+          <div class="modal-content">
+            <h3>Confirmar Ação</h3>
+            <p id="confirm-message">
+              Tem certeza que deseja realizar esta ação?
+            </p>
+            <div class="modal-actions">
+              <button id="confirm-cancel" class="btn btn-secondary">
+                Cancelar
+              </button>
+              <button id="confirm-ok" class="btn btn-danger">Confirmar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notificação de expiração -->
+        <div
+          id="expiration-notification"
+          class="notification notification-warning"
+          style="display: none"
+        >
+          <i class="fas fa-exclamation-triangle"></i>
+          <span id="expiration-message">Seu carrinho expirará em breve!</span>
+          <button id="dismiss-notification" class="btn btn-sm btn-outline">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/image-config.js"></script>
+    <script src="js/cart.js"></script>
   </body>
 </html>

@@ -16,11 +16,13 @@ router.patch("/:id/toggle-status", clientsController.toggleClientStatus);
 router.patch("/:id/update-ranking", clientsController.updateRanking);
 
 // Endereços
+router.get("/:id/addresses", clientsController.getAddresses);
 router.post("/:id/addresses", clientsController.addAddress);
 router.put("/:id/addresses/:addrId", clientsController.updateAddress);
 router.delete("/:id/addresses/:addrId", clientsController.removeAddress);
 
 // Cartões
+router.get("/:id/cards", clientsController.getCards);
 router.post("/:id/cards", clientsController.addCard);
 router.put("/:id/cards/:cardId", clientsController.updateCard);
 router.patch("/:id/cards/:cardId/prefer", clientsController.setPreferredCard);

@@ -1,101 +1,260 @@
 {
-  "clients": {
-    "validClient": {
-      "name": "João Silva Santos",
-      "gender": "Masculino",
-      "birthDate": "1990-05-15",
-      "cpf": "11144477735",
-      "phone": "11987654321",
-      "email": "joao.silva@email.com",
-      "password": "MinhaSenh@123",
-      "passwordConfirm": "MinhaSenh@123"
+  "products": [
+    {
+      "id": 1,
+      "name": "O Cortiço - Aluísio Azevedo",
+      "description": "Romance naturalista brasileiro, retrato da sociedade carioca do século XIX",
+      "price": 32.9,
+      "stock": 37,
+      "active": true
     },
-    "validClient2": {
-      "name": "Maria Oliveira Costa",
-      "gender": "Feminino",
-      "birthDate": "1985-08-22",
-      "cpf": "22255588836",
-      "phone": "11912345678",
-      "email": "maria.oliveira@email.com",
-      "password": "SenhaSegur@456",
-      "passwordConfirm": "SenhaSegur@456"
+    {
+      "id": 2,
+      "name": "Python para Análise de Dados - Wes McKinney",
+      "description": "Introdução à análise de dados com Python usando pandas e NumPy",
+      "price": 99.9,
+      "stock": 13,
+      "active": true
     },
-    "invalidClient": {
-      "name": "",
-      "gender": "",
-      "birthDate": "",
-      "cpf": "123",
-      "phone": "123",
-      "email": "email-invalido",
-      "password": "123",
-      "passwordConfirm": "456"
+    {
+      "id": 3,
+      "name": "JavaScript: O Guia Definitivo - David Flanagan",
+      "description": "Referência completa da linguagem JavaScript, atualizada e abrangente",
+      "price": 149.9,
+      "stock": 15,
+      "active": true
+    },
+    {
+      "id": 4,
+      "name": "Harry Potter e a Câmara Secreta - J.K. Rowling",
+      "description": "Segundo livro da série Harry Potter, continuação das aventuras do jovem bruxo",
+      "price": 45.9,
+      "stock": 22,
+      "active": true
+    },
+    {
+      "id": 5,
+      "name": "Clean Code - Robert C. Martin",
+      "description": "Guia para escrever código limpo e manutenível",
+      "price": 89.9,
+      "stock": 18,
+      "active": true
+    },
+    {
+      "id": 6,
+      "name": "Algoritmos e Estruturas de Dados - Cormen",
+      "description": "Livro clássico sobre algoritmos e estruturas de dados",
+      "price": 199.9,
+      "stock": 8,
+      "active": true
+    },
+    {
+      "id": 7,
+      "name": "O Senhor dos Anéis - J.R.R. Tolkien",
+      "description": "Trilogia épica de fantasia que marcou a literatura mundial",
+      "price": 75.9,
+      "stock": 25,
+      "active": true
+    },
+    {
+      "id": 8,
+      "name": "1984 - George Orwell",
+      "description": "Distopia clássica sobre controle totalitário e vigilância",
+      "price": 39.9,
+      "stock": 30,
+      "active": true
     }
-  },
-  "addresses": {
-    "billingAddress": {
+  ],
+  "clients": [
+    {
+      "id": 1,
+      "clientCode": "CLI001",
+      "name": "João Silva",
+      "email": "joao.silva@email.com",
+      "cpf": "12345678901"
+    },
+    {
+      "id": 2,
+      "clientCode": "CLI002",
+      "name": "Maria Santos",
+      "email": "maria.santos@email.com",
+      "cpf": "98765432109"
+    }
+  ],
+  "addresses": [
+    {
+      "id": 1,
+      "clientId": 1,
+      "name": "Casa",
       "residenceType": "Casa",
       "streetType": "Rua",
-      "street": "Rua das Flores",
+      "street": "das Flores",
       "number": "123",
       "district": "Centro",
-      "cep": "01234567",
+      "cep": "01234-567",
       "city": "São Paulo",
       "state": "SP",
       "country": "Brasil",
-      "observations": "Casa térrea",
-      "isBilling": true,
-      "isDelivery": false
+      "isDelivery": true
     },
-    "deliveryAddress": {
-      "residenceType": "Apartamento",
+    {
+      "id": 2,
+      "clientId": 1,
+      "name": "Trabalho",
+      "residenceType": "Comércio",
       "streetType": "Avenida",
-      "street": "Avenida Paulista",
+      "street": "Paulista",
       "number": "1000",
       "district": "Bela Vista",
-      "cep": "01310100",
+      "cep": "01310-100",
       "city": "São Paulo",
       "state": "SP",
       "country": "Brasil",
-      "observations": "Apartamento 45",
-      "isBilling": false,
-      "isDelivery": true
-    },
-    "multiplePurposeAddress": {
-      "residenceType": "Sobrado",
-      "streetType": "Rua",
-      "street": "Rua da Consolação",
-      "number": "456",
-      "district": "Consolação",
-      "cep": "01302000",
-      "city": "São Paulo",
-      "state": "SP",
-      "country": "Brasil",
-      "observations": "Sobrado com garagem",
-      "isBilling": true,
-      "isDelivery": true
-    },
-    "updatedAddress": {
-      "residenceType": "Casa",
-      "streetType": "Rua",
-      "street": "Rua das Palmeiras",
-      "number": "789",
-      "district": "Jardins",
-      "cep": "01452000",
-      "city": "São Paulo",
-      "state": "SP",
-      "country": "Brasil",
-      "observations": "Casa com quintal",
-      "isBilling": true,
       "isDelivery": true
     }
+  ],
+  "cards": [
+    {
+      "id": 1,
+      "clientId": 1,
+      "cardName": "João Silva",
+      "cardNumber": "4111111111111111",
+      "brand": "Visa",
+      "securityCode": "123",
+      "isPreferred": true
+    },
+    {
+      "id": 2,
+      "clientId": 1,
+      "cardName": "João Silva",
+      "cardNumber": "5555555555554444",
+      "brand": "Mastercard",
+      "securityCode": "456",
+      "isPreferred": false
+    }
+  ],
+  "coupons": [
+    {
+      "id": 1,
+      "code": "LIVRO10",
+      "type": "promotional",
+      "value": 10.0,
+      "used": false,
+      "expiresAt": "2024-12-31T23:59:59.000Z"
+    },
+    {
+      "id": 2,
+      "code": "DESCONTO20",
+      "type": "promotional",
+      "value": 20.0,
+      "used": false,
+      "expiresAt": "2024-12-31T23:59:59.000Z"
+    },
+    {
+      "id": 3,
+      "code": "TROCA50",
+      "type": "exchange",
+      "value": 50.0,
+      "used": false,
+      "clientId": 1,
+      "expiresAt": "2024-12-31T23:59:59.000Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "orderNumber": "PED001",
+      "clientId": 1,
+      "status": "OPEN",
+      "totalAmount": 182.8,
+      "shippingAmount": 15.0,
+      "discountAmount": 0.0,
+      "finalAmount": 197.8,
+      "deliveryAddress": {
+        "name": "Casa",
+        "street": "Rua das Flores, 123",
+        "district": "Centro",
+        "city": "São Paulo",
+        "state": "SP",
+        "cep": "01234-567"
+      }
+    }
+  ],
+  "testScenarios": {
+    "validSearchTerms": [
+      "Python",
+      "JavaScript",
+      "Harry Potter",
+      "Clean Code",
+      "Algoritmos"
+    ],
+    "invalidSearchTerms": ["LivroInexistente123", "XYZ999", "TesteInválido"],
+    "validCoupons": ["LIVRO10", "DESCONTO20", "TROCA50"],
+    "invalidCoupons": ["CUPOM_INVALIDO", "EXPIRADO123", "USADO456"],
+    "validCards": [
+      {
+        "number": "4111111111111111",
+        "brand": "Visa",
+        "securityCode": "123"
+      },
+      {
+        "number": "5555555555554444",
+        "brand": "Mastercard",
+        "securityCode": "456"
+      }
+    ],
+    "invalidCards": [
+      {
+        "number": "1234567890123456",
+        "brand": "Visa",
+        "securityCode": "999"
+      }
+    ],
+    "orderStatuses": [
+      "OPEN",
+      "PROCESSING",
+      "APPROVED",
+      "REJECTED",
+      "IN_TRANSIT",
+      "DELIVERED",
+      "EXCHANGE_REQUESTED",
+      "EXCHANGE_AUTHORIZED",
+      "EXCHANGED"
+    ],
+    "exchangeReasons": [
+      "Livro com defeito",
+      "Livro não corresponde à descrição",
+      "Livro não serve",
+      "Arrependimento da compra",
+      "Outro"
+    ]
   },
-  "editClient": {
-    "updatedData": {
-      "name": "João Silva Santos Atualizado",
-      "email": "joao.atualizado@email.com",
-      "phone": "11999888777",
-      "ranking": "5",
-      "status": "Ativo"
+  "apiEndpoints": {
+    "baseUrl": "http://127.0.0.1:56206",
+    "products": "/api/products",
+    "cart": "/api/cart",
+    "orders": "/api/orders",
+    "clients": "/api/clients",
+    "coupons": "/api/coupons"
+  },
+  "timeouts": {
+    "default": 10000,
+    "api": 15000,
+    "pageLoad": 30000,
+    "notification": 5000
+  },
+  "viewport": {
+    "mobile": {
+      "width": 375,
+      "height": 667
+    },
+    "tablet": {
+      "width": 768,
+      "height": 1024
+    },
+    "desktop": {
+      "width": 1280,
+      "height": 720
     }
   }
 }

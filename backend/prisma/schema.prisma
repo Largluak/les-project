@@ -26,6 +26,9 @@ model Client {
   addresses    Address[]
   cards        Card[]
   transactions Transaction[]
+  carts        Cart[]
+  orders       Order[]
+  coupons      Coupon[]
 }
 
 model Address {
@@ -49,15 +52,17 @@ model Address {
 }
 
 model Card {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   clientId     Int
   cardNumber   String
   cardName     String
   brand        String
   securityCode String
-  isPreferred  Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  isPreferred  Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  client       Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  payments     Payment[]
+  paymentCards PaymentCard[] // Múltiplos cartões por pagamento
 }
 
 model Transaction {
@@ -67,4 +72,143 @@ model Transaction {
   status    String
   createdAt DateTime @default(now())
   client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+// Modelos para o sistema de vendas
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  stock       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  stockBlocks StockBlock[]
+  exchanges   Exchange[]
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  clientId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int
+  price     Float
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Coupon {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  type        String   // "exchange" ou "promotional"
+  value       Float
+  used        Boolean  @default(false)
+  usedAt      DateTime?
+  expiresAt   DateTime?
+  clientId    Int?     // Para cupons de troca específicos do cliente
+  orderId     Int?     // Para cupons gerados por trocas
+  createdAt   DateTime @default(now())
+  client      Client?  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  order       Order?   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  payments    PaymentCoupon[]
+}
+
+model Order {
+  id              Int      @id @default(autoincrement())
+  orderNumber     String   @unique
+  clientId        Int
+  status          String   @default("OPEN") // OPEN, PROCESSING, APPROVED, REJECTED, IN_TRANSIT, DELIVERED, EXCHANGE_REQUESTED, EXCHANGE_AUTHORIZED, EXCHANGED
+  totalAmount     Float
+  shippingAmount  Float    @default(0)
+  discountAmount  Float    @default(0)
+  finalAmount     Float
+  deliveryAddress Json     // Endereço de entrega no momento da compra
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  items           OrderItem[]
+  payments        Payment[]
+  coupons         Coupon[]
+  exchanges       Exchange[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  cardId    Int?    // Cartão principal (para compatibilidade)
+  amount    Float
+  type      String  // "credit_card" ou "coupon"
+  status    String  @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  card      Card?   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  coupons   PaymentCoupon[]
+  cards     PaymentCard[] // Múltiplos cartões por pagamento
+}
+
+model PaymentCoupon {
+  id        Int     @id @default(autoincrement())
+  paymentId Int
+  couponId  Int
+  amount    Float
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  coupon    Coupon  @relation(fields: [couponId], references: [id], onDelete: Cascade)
+}
+
+model PaymentCard {
+  id        Int     @id @default(autoincrement())
+  paymentId Int
+  cardId    Int
+  amount    Float   // Valor pago com este cartão (mínimo R$ 10,00)
+  status    String  @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  card      Card    @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+model StockBlock {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  quantity  Int
+  reason    String   // "CART" ou "ORDER"
+  reference Int      // ID do carrinho ou pedido
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Exchange {
+  id          Int      @id @default(autoincrement())
+  orderId     Int
+  productId   Int
+  quantity    Int
+  reason      String
+  status      String   @default("PENDING") // PENDING, AUTHORIZED, RECEIVED, COMPLETED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }

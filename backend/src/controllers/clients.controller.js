@@ -324,6 +324,38 @@ module.exports = {
       });
     }
   },
+  async getAddresses(req, res) {
+    try {
+      const { id } = req.params;
+      const addresses = await AddressModel.findByClientId(id);
+      res.json({
+        success: true,
+        data: addresses,
+      });
+    } catch (error) {
+      console.error("Erro ao buscar endereços:", error);
+      res.status(500).json({
+        success: false,
+        message: "Erro interno do servidor ao buscar endereços",
+      });
+    }
+  },
+  async getCards(req, res) {
+    try {
+      const { id } = req.params;
+      const cards = await CardModel.findByClientId(id);
+      res.json({
+        success: true,
+        data: cards,
+      });
+    } catch (error) {
+      console.error("Erro ao buscar cartões:", error);
+      res.status(500).json({
+        success: false,
+        message: "Erro interno do servidor ao buscar cartões",
+      });
+    }
+  },
   async removeAddress(req, res) {
     try {
       const { id, addrId } = req.params;

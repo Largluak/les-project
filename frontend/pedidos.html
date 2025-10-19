@@ -5,86 +5,185 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meus Pedidos - Sistema de Vendas</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header>
-      <h1>Sistema de Vendas Eletrônicas</h1>
-      <nav>
-        <a href="index.html">Início</a>
-        <a href="produtos.html">Produtos</a>
-        <a href="carrinho.html"
-          >Carrinho (<span id="contador-carrinho">0</span>)</a
-        >
-        <a href="pedidos.html" class="ativo">Meus Pedidos</a>
-        <a href="adminVendas.html">Administração</a>
-      </nav>
-    </header>
-
-    <main>
-      <h2>Meus Pedidos</h2>
-
-      <div class="filtros">
-        <select id="status-filtro">
-          <option value="">Todos os status</option>
-          <option value="EM_PROCESSAMENTO">Em Processamento</option>
-          <option value="APROVADA">Aprovada</option>
-          <option value="EM_TRANSITO">Em Trânsito</option>
-          <option value="ENTREGUE">Entregue</option>
-          <option value="EM_TROCA">Em Troca</option>
-          <option value="TROCADO">Trocado</option>
-          <option value="REPROVADA">Reprovada</option>
-        </select>
-      </div>
-
-      <div id="lista-pedidos">
-        <!-- Pedidos serão carregados dinamicamente -->
-      </div>
-
-      <!-- Modal para solicitar troca -->
-      <div id="modal-troca" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <h3>Solicitar Troca</h3>
-          <form id="form-troca">
-            <div id="itens-troca">
-              <!-- Itens disponíveis para troca -->
-            </div>
-            <label for="motivo-troca">Motivo da troca:</label>
-            <textarea
-              id="motivo-troca"
-              required
-              placeholder="Descreva o motivo da troca"
-            ></textarea>
-            <button type="submit" class="btn btn-primary">
-              Solicitar Troca
-            </button>
-          </form>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <h1><i class="fas fa-list"></i> Meus Pedidos</h1>
+          <nav class="nav">
+            <a href="index.html" class="nav-link"
+              ><i class="fas fa-home"></i> Início</a
+            >
+            <a href="produtos.html" class="nav-link"
+              ><i class="fas fa-box"></i> Produtos</a
+            >
+            <a href="carrinho.html" class="nav-link"
+              ><i class="fas fa-shopping-cart"></i> Carrinho</a
+            >
+            <a href="pedidos.html" class="nav-link active"
+              ><i class="fas fa-list"></i> Pedidos</a
+            >
+          </nav>
         </div>
-      </div>
+      </header>
 
-      <!-- Modal para detalhes do pedido -->
-      <div id="modal-detalhes" class="modal">
-        <div class="modal-content modal-large">
-          <span class="close">&times;</span>
-          <h3>Detalhes do Pedido</h3>
-          <div id="conteudo-detalhes">
-            <!-- Detalhes serão carregados dinamicamente -->
+      <main class="main-content">
+        <div class="orders-container">
+          <!-- Filtros -->
+          <div class="filters-section">
+            <div class="filters">
+              <div class="filter-group">
+                <label>Status:</label>
+                <select id="status-filter">
+                  <option value="">Todos</option>
+                  <option value="OPEN">Em Aberto</option>
+                  <option value="PROCESSING">Processando</option>
+                  <option value="APPROVED">Aprovado</option>
+                  <option value="REJECTED">Rejeitado</option>
+                  <option value="IN_TRANSIT">Em Trânsito</option>
+                  <option value="DELIVERED">Entregue</option>
+                  <option value="EXCHANGE_REQUESTED">
+                    Solicitação de Troca
+                  </option>
+                  <option value="EXCHANGE_AUTHORIZED">Troca Autorizada</option>
+                  <option value="EXCHANGED">Trocado</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Período:</label>
+                <input type="date" id="start-date" />
+                <input type="date" id="end-date" />
+              </div>
+              <div class="filter-group">
+                <button id="apply-filters" class="btn btn-primary">
+                  <i class="fas fa-filter"></i> Filtrar
+                </button>
+                <button id="clear-filters" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Busca por número do pedido -->
+          <div class="search-section">
+            <div class="search-box">
+              <input
+                type="text"
+                id="order-search"
+                placeholder="Buscar por número do pedido"
+              />
+              <button id="search-order" class="btn btn-outline">
+                <i class="fas fa-search"></i> Buscar
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista de pedidos -->
+          <div class="orders-list" id="orders-list">
+            <!-- Pedidos serão carregados dinamicamente -->
+          </div>
+
+          <!-- Paginação -->
+          <div class="pagination" id="pagination">
+            <!-- Paginação será carregada dinamicamente -->
           </div>
         </div>
+      </main>
+    </div>
+
+    <!-- Modal de detalhes do pedido -->
+    <div id="order-modal" class="modal">
+      <div class="modal-content large">
+        <div class="modal-header">
+          <h3>Detalhes do Pedido</h3>
+          <button id="close-order-modal" class="btn btn-sm btn-outline">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="order-details">
+          <!-- Detalhes serão carregados dinamicamente -->
+        </div>
+        <div class="modal-footer">
+          <button id="close-modal-btn" class="btn btn-secondary">Fechar</button>
+          <button
+            id="request-exchange-btn"
+            class="btn btn-warning"
+            style="display: none"
+          >
+            <i class="fas fa-exchange-alt"></i> Solicitar Troca
+          </button>
+        </div>
       </div>
-    </main>
+    </div>
 
-    <script src="script.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        carregarPedidos();
-        atualizarContadorCarrinho();
-        inicializarModals();
+    <!-- Modal de solicitação de troca -->
+    <div id="exchange-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Solicitar Troca</h3>
+          <button id="close-exchange-modal" class="btn btn-sm btn-outline">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="exchange-form">
+            <input type="hidden" id="exchange-order-id" />
+            <div class="form-group">
+              <label>Produto:</label>
+              <select id="exchange-product" required>
+                <option value="">Selecione um produto</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Quantidade:</label>
+              <input type="number" id="exchange-quantity" min="1" required />
+            </div>
+            <div class="form-group">
+              <label>Motivo da Troca:</label>
+              <select id="exchange-reason" required>
+                <option value="">Selecione um motivo</option>
+                <option value="Produto defeituoso">Produto defeituoso</option>
+                <option value="Produto não corresponde à descrição">
+                  Produto não corresponde à descrição
+                </option>
+                <option value="Produto não serve">Produto não serve</option>
+                <option value="Arrependimento da compra">
+                  Arrependimento da compra
+                </option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div
+              class="form-group"
+              id="other-reason-group"
+              style="display: none"
+            >
+              <label>Especifique o motivo:</label>
+              <textarea
+                id="other-reason"
+                placeholder="Descreva o motivo da troca"
+              ></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button id="cancel-exchange" class="btn btn-secondary">
+            Cancelar
+          </button>
+          <button id="submit-exchange" class="btn btn-warning">
+            Solicitar Troca
+          </button>
+        </div>
+      </div>
+    </div>
 
-        document
-          .getElementById("status-filtro")
-          .addEventListener("change", filtrarPedidos);
-      });
-    </script>
+    <script src="js/config.js"></script>
+    <script src="js/orders.js"></script>
   </body>
 </html>

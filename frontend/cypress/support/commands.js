@@ -1,189 +1,250 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
+// Comandos personalizados do Cypress
 
-// Comandos personalizados para os testes de clientes
-
-// Comando para preencher dados pessoais do cliente
-Cypress.Commands.add("fillClientPersonalData", (clientData) => {
-  cy.get("#nome").type(clientData.name);
-  cy.get("#genero").select(clientData.gender);
-  cy.get("#nascimento").type(clientData.birthDate);
-  cy.get("#cpf").type(clientData.cpf);
-  cy.get("#telefone").type(clientData.phone);
-  cy.get("#email").type(clientData.email);
-  cy.get("#senha").type(clientData.password);
-  cy.get("#confirmarSenha").type(clientData.passwordConfirm);
+// Comando para visitar página com clientId definido
+Cypress.Commands.add("visitWithClientId", (url, clientId = "42") => {
+  cy.visit(url, {
+    onBeforeLoad(win) {
+      win.localStorage.setItem("clientId", clientId);
+    },
+  });
 });
 
-// Comando para preencher dados de endereço
-Cypress.Commands.add("fillAddressData", (addressData, addressNumber = 1) => {
-  cy.get(`#tipoEndereco${addressNumber}`).select(addressData.residenceType);
-  cy.get(`#tipoLogradouro${addressNumber}`).select(addressData.streetType);
-  cy.get(`#logradouro${addressNumber}`).type(addressData.street);
-  cy.get(`#numero${addressNumber}`).type(addressData.number);
-  cy.get(`#bairro${addressNumber}`).type(addressData.district);
-  cy.get(`#cep${addressNumber}`).type(addressData.cep);
-  cy.get(`#cidade${addressNumber}`).type(addressData.city);
-  cy.get(`#estado${addressNumber}`).select(addressData.state);
+// Comando para garantir que existe um carrinho ativo
+Cypress.Commands.add("ensureCartExists", (clientId = "42") => {
+  // Primeiro adicionar um produto para garantir que o carrinho existe
+  cy.visitWithClientId("/produtos.html", clientId);
 
-  // Quebrar a cadeia de comandos para evitar problemas de DOM desconectado
-  cy.get(`#pais${addressNumber}`).clear();
-  cy.get(`#pais${addressNumber}`).type(addressData.country);
+  cy.get(".products-container").should("be.visible");
 
-  if (addressData.observations) {
-    cy.get(`#observacoes${addressNumber}`).type(addressData.observations);
+  // Interceptar requisição de adicionar ao carrinho
+  cy.intercept("POST", "**/api/cart/*/items").as("addToCart");
+
+  // Adicionar primeiro produto disponível
+  cy.get(".product-card")
+    .first()
+    .within(() => {
+      cy.get(".product-actions .btn-primary").click();
+    });
+
+  // Aguardar confirmação de que foi adicionado
+  cy.wait("@addToCart", { timeout: 10000 }).then((interception) => {
+    if (interception.response.statusCode === 200) {
+      cy.log("✅ Produto adicionado ao carrinho");
+      if (interception.response.body?.data?.cartItem) {
+        cy.log(
+          `🔍 Produto: ${
+            interception.response.body.data.cartItem.product?.name ||
+            "Nome não disponível"
+          }`
+        );
+      }
+    } else {
+      cy.log(
+        `❌ Falha ao adicionar produto: ${interception.response.statusCode}`
+      );
+    }
+  });
+
+  // Aguardar mais tempo para o carrinho ser totalmente criado e atualizado
+  cy.wait(2000);
+
+  // Verificar se o produto apareceu no carrinho
+  cy.visitWithClientId("/carrinho.html", clientId);
+  cy.get(".cart-item", { timeout: 10000 }).should("have.length.greaterThan", 0);
+  cy.log("✅ Carrinho criado e produto visível");
+});
+
+// Comando para aguardar carregamento da página
+Cypress.Commands.add("waitForPageLoad", () => {
+  cy.get("body").should("be.visible");
+  cy.get(".container").should("be.visible");
+});
+
+// Comando para limpar carrinho
+Cypress.Commands.add("clearCart", () => {
+  cy.visit("/carrinho.html");
+  cy.get("body").then(($body) => {
+    if ($body.find("#clear-cart").length > 0) {
+      cy.get("#clear-cart").click();
+      cy.get("#confirm-modal").should("be.visible");
+      cy.get("#confirm-ok").click();
+    }
+  });
+});
+
+// Comando para adicionar produto ao carrinho
+Cypress.Commands.add("addProductToCart", (productIndex = 0, quantity = 1) => {
+  cy.visit("/produtos.html");
+  cy.get(".products-container", { timeout: 10000 }).should("be.visible");
+
+  cy.get(".product-card")
+    .eq(productIndex)
+    .within(() => {
+      // Ajustar quantidade se necessário
+      for (let i = 1; i < quantity; i++) {
+        cy.get(".quantity-btn").last().click();
+      }
+      cy.get(".product-actions .btn-primary").click();
+    });
+
+  cy.get(".notification-success", { timeout: 5000 }).should("be.visible");
+});
+
+// Comando para criar pedido completo
+Cypress.Commands.add("createCompleteOrder", () => {
+  // Adicionar produtos ao carrinho
+  cy.addProductToCart(0, 1);
+  cy.addProductToCart(1, 2);
+
+  // Ir para checkout
+  cy.get('a[href="carrinho.html"]').click();
+  cy.get("#proceed-checkout").click();
+
+  // Adicionar endereço
+  cy.get("#add-address-btn").click();
+  cy.get("#address-name").type("Casa");
+  cy.get("#residence-type").select("Casa");
+  cy.get("#street-type").select("Rua");
+  cy.get("#street").type("Rua das Flores");
+  cy.get("#number").type("123");
+  cy.get("#district").type("Centro");
+  cy.get("#cep").type("01234567");
+  cy.get("#city").type("São Paulo");
+  cy.get("#state").type("SP");
+  cy.get("#country").type("Brasil");
+  cy.get("#address-form").submit();
+  cy.get(".notification-success", { timeout: 5000 }).should("be.visible");
+
+  // Selecionar endereço
+  cy.get(".address-item")
+    .first()
+    .within(() => {
+      cy.get('input[type="radio"]').check();
+    });
+  cy.get("#next-step-1").click();
+
+  // Adicionar cartão
+  cy.get("#add-card-btn").click();
+  cy.get("#card-name").type("João Silva");
+  cy.get("#card-number").type("4111111111111111");
+  cy.get("#card-brand").select("Visa");
+  cy.get("#security-code").type("123");
+  cy.get("#card-form").submit();
+  cy.get(".notification-success", { timeout: 5000 }).should("be.visible");
+
+  // Selecionar cartão
+  cy.get(".card-item")
+    .first()
+    .within(() => {
+      cy.get('input[type="radio"]').check();
+    });
+  cy.get("#next-step-2").click();
+
+  // Confirmar pedido
+  cy.get("#confirm-order").click();
+  cy.get(".notification-success", { timeout: 10000 }).should("be.visible");
+});
+
+// Comando para verificar se há produtos no banco
+Cypress.Commands.add("checkProductsAvailable", () => {
+  cy.request({
+    method: "GET",
+    url: "/api/products?limit=1",
+    failOnStatusCode: false,
+  }).then((response) => {
+    if (response.status === 200 && response.body.success) {
+      expect(response.body.data.products.length).to.be.greaterThan(0);
+    }
+  });
+});
+
+// Comando para aguardar notificação
+Cypress.Commands.add(
+  "waitForNotification",
+  (type = "success", timeout = 5000) => {
+    cy.get(`.notification-${type}`, { timeout }).should("be.visible");
   }
-
-  if (addressData.isBilling) {
-    cy.get(`#enderecoCobranca${addressNumber}`).check();
-  }
-
-  if (addressData.isDelivery) {
-    cy.get(`#enderecoEntrega${addressNumber}`).check();
-  }
-});
-
-// Comando para adicionar um novo endereço
-Cypress.Commands.add("addNewAddress", () => {
-  cy.get("#btnAdicionarEndereco").click();
-  // Aguardar um pouco para a página estabilizar após adicionar endereço
-  cy.wait(500);
-});
-
-// Comando para remover um endereço específico
-Cypress.Commands.add("removeAddress", (addressNumber) => {
-  cy.get(`[data-endereco="${addressNumber}"] .btn-remove-endereco`).click();
-});
-
-// Comando para navegar para uma página específica
-Cypress.Commands.add("navigateToPage", (pageName) => {
-  cy.get("nav").contains(pageName).click();
-});
-
-// Comando para aguardar carregamento da lista de clientes
-Cypress.Commands.add("waitForClientsList", () => {
-  cy.get("#tabelaClientes tbody").should("be.visible");
-  // Aguardar também os campos de filtro estarem disponíveis
-  cy.get("#filtroNome").should("be.visible");
-  cy.get("#filtroEmail").should("be.visible");
-});
-
-// Comando para aguardar carregamento da lista de endereços
-Cypress.Commands.add("waitForAddressesList", () => {
-  cy.get("#tabelaEnderecos tbody").should("be.visible");
-  // Aguardar que haja pelo menos um endereço na lista
-  cy.get("#tabelaEnderecos tbody tr").should("have.length.at.least", 1);
-});
-
-// Comando para filtrar clientes
-Cypress.Commands.add("filterClients", (name = "", email = "") => {
-  if (name) {
-    cy.get("#filtroNome").clear().type(name);
-  }
-  if (email) {
-    cy.get("#filtroEmail").clear().type(email);
-  }
-  cy.get("button").contains("Filtrar").click();
-});
-
-// Comando para editar cliente
-Cypress.Commands.add("editClient", (clientName) => {
-  // Validar se o nome do cliente não está vazio
-  if (!clientName || clientName.trim() === "") {
-    throw new Error("Nome do cliente não pode estar vazio");
-  }
-
-  cy.get("#tabelaClientes tbody tr")
-    .contains(clientName)
-    .parent()
-    .find("button")
-    .contains("Editar")
-    .click();
-});
-
-// Comando para inativar cliente
-Cypress.Commands.add("inactivateClient", (clientName) => {
-  cy.get("#tabelaClientes tbody tr")
-    .contains(clientName)
-    .parent()
-    .find("button")
-    .contains("Inativar")
-    .click();
-});
-
-// Comando para remover cliente
-Cypress.Commands.add("removeClient", (clientName) => {
-  cy.get("#tabelaClientes tbody tr")
-    .contains(clientName)
-    .parent()
-    .find("button")
-    .contains("Remover")
-    .click();
-});
-
-// Comando para editar endereço
-Cypress.Commands.add("editAddress", (clientName) => {
-  cy.get("#tabelaEnderecos tbody tr")
-    .contains(clientName)
-    .parent()
-    .find("button")
-    .contains("Editar")
-    .click();
-});
-
-// Comando para remover endereço
-Cypress.Commands.add("removeAddressFromList", (clientName) => {
-  cy.get("#tabelaEnderecos tbody tr")
-    .contains(clientName)
-    .parent()
-    .find("button")
-    .contains("Remover")
-    .click();
-});
-
-// Comando para preencher modal de edição de cliente
-Cypress.Commands.add("fillEditClientModal", (clientData) => {
-  cy.get("#editNome").clear().type(clientData.name);
-  cy.get("#editEmail").clear().type(clientData.email);
-  cy.get("#editTelefone").clear().type(clientData.phone);
-  cy.get("#editRanking").clear().type(clientData.ranking);
-  cy.get("#editStatus").select(clientData.status);
-});
-
-// Comando para preencher modal de edição de endereço
-Cypress.Commands.add("fillEditAddressModal", (addressData) => {
-  cy.get("#editTipo").select(addressData.residenceType);
-  cy.get("#editLogradouro").clear().type(addressData.street);
-  cy.get("#editNumero").clear().type(addressData.number);
-  cy.get("#editBairro").clear().type(addressData.district);
-  cy.get("#editCidade").clear().type(addressData.city);
-  cy.get("#editCep").clear().type(addressData.cep);
-  cy.get("#editEstado").clear().type(addressData.state);
-  cy.get("#editPais").clear().type(addressData.country);
-
-  if (addressData.observations) {
-    cy.get("#editObservacoes").clear().type(addressData.observations);
-  }
-});
-
-// Comando para confirmar modal de confirmação
-Cypress.Commands.add("confirmModal", () => {
-  cy.get("#modalConfirmacao .btn-danger").click();
-});
-
-// Comando para cancelar modal de confirmação
-Cypress.Commands.add("cancelModal", () => {
-  cy.get("#modalConfirmacao .btn-cancel").click();
-});
+);
 
 // Comando para fechar modal
-Cypress.Commands.add("closeModal", () => {
-  cy.get(".modal .close").click();
+Cypress.Commands.add("closeModal", (modalId) => {
+  cy.get(`#${modalId}`).should("be.visible");
+  cy.get(`#${modalId} .btn-secondary, #${modalId} .btn-sm`).first().click();
+  cy.get(`#${modalId}`).should("not.be.visible");
+});
+
+// Comando para verificar se elemento está visível ou não
+Cypress.Commands.add(
+  "shouldBeVisibleOrNot",
+  (selector, shouldBeVisible = true) => {
+    if (shouldBeVisible) {
+      cy.get(selector).should("be.visible");
+    } else {
+      cy.get(selector).should("not.be.visible");
+    }
+  }
+);
+
+// Comando para aguardar carregamento de API
+Cypress.Commands.add("waitForApiResponse", (url, timeout = 10000) => {
+  cy.intercept("GET", url).as("apiCall");
+  cy.wait("@apiCall", { timeout });
+});
+
+// Comando para verificar se há dados no localStorage
+Cypress.Commands.add("checkLocalStorage", (key, expectedValue) => {
+  cy.window().then((win) => {
+    const value = win.localStorage.getItem(key);
+    if (expectedValue) {
+      expect(value).to.equal(expectedValue);
+    } else {
+      expect(value).to.not.be.null;
+    }
+  });
+});
+
+// Comando para simular usuário logado
+Cypress.Commands.add("simulateLoggedUser", (clientId = "42") => {
+  cy.window().then((win) => {
+    win.localStorage.setItem("clientId", clientId);
+  });
+});
+
+// Comando para limpar localStorage (sobrescreve o comando padrão)
+Cypress.Commands.overwrite("clearLocalStorage", () => {
+  cy.window().then((win) => {
+    win.localStorage.clear();
+  });
+});
+
+// Comando para verificar se página carregou completamente
+Cypress.Commands.add("waitForPageReady", () => {
+  cy.get("body").should("be.visible");
+  cy.get("body").should("not.have.class", "loading");
+});
+
+// Comando para aguardar elemento com retry
+Cypress.Commands.add("waitForElementWithRetry", (selector, maxRetries = 3) => {
+  for (let i = 0; i < maxRetries; i++) {
+    cy.get("body").then(($body) => {
+      if ($body.find(selector).length > 0) {
+        cy.get(selector).should("be.visible");
+        return;
+      }
+      if (i < maxRetries - 1) {
+        cy.wait(1000);
+      }
+    });
+  }
+});
+
+// Comando para verificar se API está funcionando
+Cypress.Commands.add("checkApiHealth", () => {
+  cy.request({
+    method: "GET",
+    url: "/health",
+    failOnStatusCode: false,
+  }).then((response) => {
+    expect(response.status).to.be.oneOf([200, 404]); // 404 é ok se não houver endpoint de health
+  });
 });

@@ -1,5 +1,9 @@
 const express = require("express");
 const clientsRoutes = require("../routes/clients.routes");
+const cartRoutes = require("../routes/cart.routes");
+const orderRoutes = require("../routes/order.routes");
+const productRoutes = require("../routes/product.routes");
+const couponRoutes = require("../routes/coupon.routes");
 
 class RoutesConfig {
   constructor(app) {
@@ -19,6 +23,10 @@ class RoutesConfig {
 
     // API routes
     this.app.use("/api/clients", clientsRoutes);
+    this.app.use("/api/cart", cartRoutes);
+    this.app.use("/api/orders", orderRoutes);
+    this.app.use("/api/products", productRoutes);
+    this.app.use("/api/coupons", couponRoutes);
 
     // 404 handler
     this.app.use("*", (req, res) => {
@@ -32,7 +40,3 @@ class RoutesConfig {
 }
 
 module.exports = RoutesConfig;
-
-
-
-

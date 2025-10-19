@@ -3,48 +3,115 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistema de Clientes</title>
+    <title>Sistema de Vendas - Livraria Eletrônica</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header>
-      <h1>
-        Sistema de cadastro de Livros, Gerenciador de Vendas, Controle de
-        Estoque e IA
-      </h1>
-      <nav>
-        <a href="sistemaLivros.html">Sistema de Livros</a>
-        <a href="sistemaVendas.html">Gerenciador de Vendas</a>
-        <a href="controleEstoque.html">Controle de Estoque</a>
-        <a href="sistemaIA.html">Sistema de recomendação IA</a>
-      </nav>
-
-      <h1>Sistema de Clientes (protótipo)</h1>
-      <nav>
-        <a href="index.html" class="ativo">Início</a>
-        <a href="cadastrarClientes.html">Cadastrar Cliente</a>
-        <a href="cartoesClientes.html">Cartões</a>
-        <a href="listarClientes.html">Listar Clientes</a>
-        <a href="listarEndereco.html">Listar Endereços</a>
-        <a href="listarCartoes.html">Listar Cartões</a>
-        <a href="alterarSenha.html">Alterar Senha</a>
-        <a href="analiseHistoricoVendas.html">Análise de Vendas</a>
-      </nav>
+    <header class="header">
+      <div class="header-content">
+        <h1>
+          <i class="fas fa-book"></i>
+          Livraria Eletrônica - Sistema de Vendas
+        </h1>
+      </div>
     </header>
 
-    <main>
-      <h2>Bem-vindo!</h2>
-      <p>
-        Este é o protótipo do sistema de cadastro de clientes com dados
-        simulados.
-      </p>
-      <div class="resumo">
-        <p>Total de clientes: <span id="totalClientes">0</span></p>
-        <p>Clientes inativos: <span id="clientesInativos">0</span></p>
-        <p>Cliente com maior ranking: <span id="melhorCliente">-</span></p>
+    <main class="main-content">
+      <div class="container">
+        <div class="welcome-section">
+          <h2>Bem-vindo ao Sistema!</h2>
+          <p>Escolha como deseja acessar o sistema:</p>
+        </div>
+
+        <div class="access-options">
+          <!-- Seção Admin -->
+          <div class="access-card admin-card">
+            <div class="card-icon">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <h3>Área Administrativa</h3>
+            <p>Gerencie livros, estoque, vendas e clientes</p>
+            <button class="btn btn-primary" onclick="accessAdmin()">
+              <i class="fas fa-cog"></i>
+              Acessar Admin
+            </button>
+          </div>
+
+          <!-- Seção Cliente -->
+          <div class="access-card client-card">
+            <div class="card-icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <h3>Área do Cliente</h3>
+            <p>Navegue pelos produtos e faça suas compras</p>
+            <button class="btn btn-secondary" onclick="toggleClientSelector()">
+              <i class="fas fa-users"></i>
+              Selecionar Cliente
+            </button>
+          </div>
+        </div>
+
+        <!-- Seletor de Cliente -->
+        <div id="client-selector" class="client-selector" style="display: none">
+          <div class="selector-header">
+            <h3>
+              <i class="fas fa-user-circle"></i>
+              Selecionar Cliente
+            </h3>
+            <button class="btn-close" onclick="toggleClientSelector()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <div class="selector-content">
+            <p>Escolha um cliente para simular o acesso:</p>
+            <div class="client-list" id="client-list">
+              <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                Carregando clientes...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informações do Cliente Conectado -->
+        <div
+          id="connected-client"
+          class="connected-client"
+          style="display: none"
+        >
+          <div class="client-info">
+            <h3>
+              <i class="fas fa-user-check"></i>
+              Cliente Conectado
+            </h3>
+            <div class="client-details">
+              <p><strong>Nome:</strong> <span id="connected-name">-</span></p>
+              <p><strong>ID:</strong> <span id="connected-id">-</span></p>
+              <p>
+                <strong>Gênero:</strong> <span id="connected-gender">-</span>
+              </p>
+            </div>
+            <div class="client-actions">
+              <button class="btn btn-primary" onclick="accessAsClient()">
+                <i class="fas fa-shopping-cart"></i>
+                Ir para Loja
+              </button>
+              <button class="btn btn-outline" onclick="disconnectClient()">
+                <i class="fas fa-sign-out-alt"></i>
+                Trocar Cliente
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
-    <script src="scripts/script-clients.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/client-selector.js"></script>
   </body>
 </html>

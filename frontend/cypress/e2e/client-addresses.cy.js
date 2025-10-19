@@ -152,11 +152,6 @@ describe("CRUD de Clientes - Endereços", () => {
       });
   });
 
-  // Teste removido - funcionalidade não implementada
-  // it("Deve fechar modal de edição de endereço ao clicar fora dele", () => {
-  //   // Este teste foi removido porque a funcionalidade não está implementada
-  // });
-
   it("Deve fechar modal de edição de endereço ao clicar em Cancelar", () => {
     // Obter o primeiro endereço da lista
     cy.get("#tabelaEnderecos tbody tr")

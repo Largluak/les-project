@@ -1,0 +1,615 @@
+/* ==============================
+   CHECKOUT DARK THEME - FORÇA MÁXIMA
+   ============================== */
+
+/* Forçar tema escuro em TODOS os elementos do checkout */
+.checkout-container,
+.checkout-container *,
+.checkout-container div,
+.checkout-container span,
+.checkout-container p,
+.checkout-container label,
+.checkout-container input,
+.checkout-container button,
+.checkout-container select,
+.checkout-container textarea {
+  color: #e0e0e0 !important;
+}
+
+/* Forçar fundo escuro em TODOS os elementos do checkout */
+.checkout-container,
+.checkout-container div:not(.checkout-steps .step.active),
+.checkout-container .checkout-content,
+.checkout-container .checkout-sidebar {
+  background: #1e2433 !important;
+}
+
+.checkout-container .checkout-content,
+.checkout-container .checkout-sidebar {
+  background: #1e2433 !important;
+}
+
+.checkout-container h1,
+.checkout-container h2,
+.checkout-container h3,
+.checkout-container h4,
+.checkout-container h5,
+.checkout-container h6 {
+  color: #2196f3 !important;
+}
+
+/* Cards de endereço - máxima especificidade */
+.checkout-container .address-card,
+.checkout-container [class*="address-card"],
+.checkout-container div[style*="background: white"],
+.checkout-container div[style*="background-color: white"],
+.checkout-container div[style*="background: #fff"],
+.checkout-container div[style*="background-color: #fff"] {
+  background: #2a2f3d !important;
+  border: 1px solid #404854 !important;
+  color: #e0e0e0 !important;
+}
+
+.checkout-container .address-card:hover,
+.checkout-container [class*="address-card"]:hover {
+  background: #333844 !important;
+  border-color: #2196f3 !important;
+}
+
+.checkout-container .address-card.selected,
+.checkout-container [class*="address-card"].selected {
+  background: #2196f3 !important;
+  border-color: #1976d2 !important;
+  color: white !important;
+}
+
+/* Inputs - máxima especificidade */
+.checkout-container input,
+.checkout-container input[type="number"],
+.checkout-container input[type="text"],
+.checkout-container input[type="email"],
+.checkout-container input[type="tel"],
+.checkout-container select,
+.checkout-container textarea,
+.checkout-container input[style*="background: white"],
+.checkout-container input[style*="background-color: white"],
+.checkout-container input[style*="background: #fff"],
+.checkout-container input[style*="background-color: #fff"] {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+.checkout-container input::placeholder,
+.checkout-container textarea::placeholder {
+  color: #e0e0e0 !important;
+  opacity: 0.8;
+}
+
+/* Botões - máxima especificidade */
+.checkout-container button,
+.checkout-container .btn,
+.checkout-container a.btn,
+.checkout-container button[style*="background: white"],
+.checkout-container button[style*="background-color: white"],
+.checkout-container button[style*="background: #fff"],
+.checkout-container button[style*="background-color: #fff"] {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+.checkout-container button:hover,
+.checkout-container .btn:hover,
+.checkout-container a.btn:hover {
+  background: #333844 !important;
+  color: #ffffff !important;
+  border-color: #2196f3 !important;
+}
+
+/* Botão primário */
+.checkout-container .btn-primary,
+.checkout-container button.btn-primary {
+  background: #2196f3 !important;
+  color: white !important;
+  border: 1px solid #1976d2 !important;
+}
+
+.checkout-container .btn-primary:hover,
+.checkout-container button.btn-primary:hover {
+  background: #1976d2 !important;
+  border-color: #1565c0 !important;
+}
+
+/* Sidebar - máxima especificidade */
+.checkout-sidebar,
+.checkout-sidebar *,
+.checkout-sidebar div,
+.checkout-sidebar span,
+.checkout-sidebar p {
+  background: #1e2433 !important;
+  color: #e0e0e0 !important;
+}
+
+.checkout-sidebar h3 {
+  color: #2196f3 !important;
+}
+
+.checkout-sidebar .total-row {
+  color: #e0e0e0 !important;
+  border-bottom: 1px solid #404854 !important;
+}
+
+.checkout-sidebar .total-row.final {
+  color: #2196f3 !important;
+  font-weight: bold;
+  border-top: 1px solid #404854 !important;
+}
+
+/* Lista de endereços */
+.address-list,
+.address-list * {
+  background: transparent !important;
+  color: #e0e0e0 !important;
+}
+
+.address-list .address-card {
+  background: #2a2f3d !important;
+  border: 1px solid #404854 !important;
+  color: #e0e0e0 !important;
+}
+
+.address-list .address-card:hover {
+  background: #333844 !important;
+  border-color: #2196f3 !important;
+}
+
+.address-list .address-card.selected {
+  background: #2196f3 !important;
+  border-color: #1976d2 !important;
+  color: white !important;
+}
+
+/* Lista de cartões */
+.card-list,
+.card-list * {
+  background: transparent !important;
+  color: #e0e0e0 !important;
+}
+
+.card-list .card-item {
+  background: #2a2f3d !important;
+  border: 1px solid #404854 !important;
+  color: #e0e0e0 !important;
+}
+
+.card-list .card-item:hover {
+  background: #333844 !important;
+  border-color: #2196f3 !important;
+}
+
+.card-list .card-item.selected {
+  background: #2196f3 !important;
+  border-color: #1976d2 !important;
+  color: white !important;
+}
+
+/* Seções específicas */
+.address-section,
+.payment-section,
+.coupon-section {
+  background: transparent !important;
+}
+
+.address-section h3,
+.payment-section h3,
+.coupon-section h3 {
+  color: #2196f3 !important;
+}
+
+/* Input de cupom */
+.coupon-input {
+  background: transparent !important;
+}
+
+.coupon-input input {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+.coupon-input input::placeholder {
+  color: #e0e0e0 !important;
+  opacity: 0.8;
+}
+
+/* Cupons aplicados */
+.applied-coupons {
+  background: transparent !important;
+}
+
+/* Itens do pedido */
+.order-items {
+  background: transparent !important;
+}
+
+.order-items .order-item {
+  background: #2a2f3d !important;
+  border: 1px solid #404854 !important;
+  color: #e0e0e0 !important;
+}
+
+.order-items .order-item .item-name {
+  color: #2196f3 !important;
+}
+
+.order-items .order-item .item-price {
+  color: #2196f3 !important;
+}
+
+.order-items .order-item .item-quantity {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+/* Totais do pedido */
+.order-totals {
+  background: transparent !important;
+}
+
+.order-totals .total-row {
+  color: #e0e0e0 !important;
+  border-bottom: 1px solid #404854 !important;
+}
+
+.order-totals .total-row.final {
+  color: #2196f3 !important;
+  font-weight: bold;
+  border-top: 1px solid #404854 !important;
+}
+
+/* Botões específicos do checkout */
+#add-address-btn,
+#add-card-btn,
+#apply-coupon {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+#add-address-btn:hover,
+#add-card-btn:hover,
+#apply-coupon:hover {
+  background: #333844 !important;
+  color: #ffffff !important;
+  border-color: #2196f3 !important;
+}
+
+/* Botões de navegação */
+#next-step-1,
+#next-step-2,
+#prev-step-2,
+#prev-step-3,
+#confirm-order {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+#next-step-1:hover,
+#next-step-2:hover,
+#prev-step-2:hover,
+#prev-step-3:hover,
+#confirm-order:hover {
+  background: #333844 !important;
+  color: #ffffff !important;
+  border-color: #2196f3 !important;
+}
+
+/* Forçar estilos em elementos com estilos inline */
+div[style*="background: white"],
+div[style*="background-color: white"],
+div[style*="background: #fff"],
+div[style*="background-color: #fff"] {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+input[style*="background: white"],
+input[style*="background-color: white"],
+input[style*="background: #fff"],
+input[style*="background-color: #fff"] {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+button[style*="background: white"],
+button[style*="background-color: white"],
+button[style*="background: #fff"],
+button[style*="background-color: #fff"] {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+/* ==============================
+   CORREÇÕES ESPECÍFICAS PARA PASSOS
+   ============================== */
+
+/* Passos do checkout */
+.checkout-steps {
+  background: transparent !important;
+}
+
+.checkout-steps .step {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+.checkout-steps .step.active {
+  background: #2196f3 !important;
+  color: white !important;
+  border: 1px solid #1976d2 !important;
+}
+
+.checkout-steps .step:hover {
+  background: #333844 !important;
+  border-color: #2196f3 !important;
+}
+
+/* Seções específicas do checkout */
+.checkout-step {
+  background: transparent !important;
+}
+
+.checkout-step h2 {
+  color: #2196f3 !important;
+}
+
+.checkout-step h3 {
+  color: #2196f3 !important;
+}
+
+/* Formulários */
+.checkout-step form {
+  background: transparent !important;
+}
+
+.checkout-step .form-group {
+  background: transparent !important;
+}
+
+.checkout-step .form-group label {
+  color: #e0e0e0 !important;
+}
+
+/* Botões de ação */
+.checkout-actions {
+  background: transparent !important;
+}
+
+.checkout-actions .btn {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+.checkout-actions .btn:hover {
+  background: #333844 !important;
+  color: #ffffff !important;
+  border-color: #2196f3 !important;
+}
+
+.checkout-actions .btn-primary {
+  background: #2196f3 !important;
+  color: white !important;
+  border: 1px solid #1976d2 !important;
+}
+
+.checkout-actions .btn-primary:hover {
+  background: #1976d2 !important;
+  border-color: #1565c0 !important;
+}
+
+/* Sobrescrever qualquer elemento com fundo branco */
+.checkout-container *[style*="background: white"],
+.checkout-container *[style*="background-color: white"],
+.checkout-container *[style*="background: #fff"],
+.checkout-container *[style*="background-color: #fff"],
+.checkout-container *[style*="background: #ffffff"],
+.checkout-container *[style*="background-color: #ffffff"] {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+/* Forçar tema escuro em elementos específicos que podem estar brancos */
+.checkout-container .address-section,
+.checkout-container .payment-section,
+.checkout-container .coupon-section,
+.checkout-container .order-summary,
+.checkout-container .sidebar-content,
+.checkout-container .sidebar-items,
+.checkout-container .sidebar-totals {
+  background: #2a2f3d !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #404854 !important;
+}
+
+/* ==============================
+   CARDS DE CARTÃO CLICÁVEIS
+   ============================== */
+
+.card-item {
+  background: #2a2f3d !important;
+  border: 2px solid #404854 !important;
+  border-radius: 8px !important;
+  padding: 20px !important;
+  margin-bottom: 15px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  color: #e0e0e0 !important;
+}
+
+.card-item:hover {
+  background: #333844 !important;
+  border-color: #2196f3 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2) !important;
+}
+
+.card-item.selected {
+  background: #2196f3 !important;
+  border-color: #1976d2 !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3) !important;
+}
+
+.card-item .card-info {
+  flex: 1 !important;
+}
+
+.card-item .card-info h4 {
+  color: inherit !important;
+  margin: 0 0 8px 0 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.card-item .card-info p {
+  color: inherit !important;
+  margin: 4px 0 !important;
+  font-size: 14px !important;
+  opacity: 0.9 !important;
+}
+
+.card-item .card-info .badge {
+  background: #4caf50 !important;
+  color: white !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  margin-top: 8px !important;
+  display: inline-block !important;
+}
+
+.card-item.selected .card-info .badge {
+  background: #45a049 !important;
+}
+
+.card-item .card-selection-indicator {
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  border: 2px solid currentColor !important;
+  transition: all 0.3s ease !important;
+}
+
+.card-item .card-selection-indicator i {
+  font-size: 8px !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.card-item.selected .card-selection-indicator {
+  background: white !important;
+  border-color: white !important;
+}
+
+.card-item.selected .card-selection-indicator i {
+  opacity: 1 !important;
+  color: #2196f3 !important;
+}
+
+/* ==============================
+   CARDS DE ENDEREÇO CLICÁVEIS
+   ============================== */
+
+.address-card {
+  background: #2a2f3d !important;
+  border: 2px solid #404854 !important;
+  border-radius: 8px !important;
+  padding: 20px !important;
+  margin-bottom: 15px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  color: #e0e0e0 !important;
+}
+
+.address-card:hover {
+  background: #333844 !important;
+  border-color: #2196f3 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2) !important;
+}
+
+.address-card.selected {
+  background: #2196f3 !important;
+  border-color: #1976d2 !important;
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3) !important;
+}
+
+.address-card .address-info {
+  flex: 1 !important;
+}
+
+.address-card .address-info h4 {
+  color: inherit !important;
+  margin: 0 0 8px 0 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.address-card .address-info p {
+  color: inherit !important;
+  margin: 4px 0 !important;
+  font-size: 14px !important;
+  opacity: 0.9 !important;
+}
+
+.address-card .address-info small {
+  color: inherit !important;
+  opacity: 0.8 !important;
+}
+
+.address-card .address-selection-indicator {
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  border: 2px solid currentColor !important;
+  transition: all 0.3s ease !important;
+}
+
+.address-card .address-selection-indicator i {
+  font-size: 8px !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.address-card.selected .address-selection-indicator {
+  background: white !important;
+  border-color: white !important;
+}
+
+.address-card.selected .address-selection-indicator i {
+  opacity: 1 !important;
+  color: #2196f3 !important;
+}

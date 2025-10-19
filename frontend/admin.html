@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Área Administrativa - Livraria Eletrônica</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <h1>
+          <i class="fas fa-user-shield"></i>
+          Área Administrativa
+        </h1>
+        <nav class="admin-nav">
+          <a href="index.html" class="btn btn-outline">
+            <i class="fas fa-home"></i>
+            Voltar ao Início
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container">
+        <div class="admin-welcome">
+          <h2>
+            <i class="fas fa-cog"></i>
+            Painel de Administração
+          </h2>
+          <p>Gerencie todos os aspectos do sistema de vendas</p>
+        </div>
+
+        <div class="admin-sections">
+          <!-- Sistema de Livros -->
+          <div class="admin-card">
+            <div class="card-icon">
+              <i class="fas fa-book"></i>
+            </div>
+            <h3>Sistema de Livros</h3>
+            <p>Gerencie o catálogo de livros, preços e estoque</p>
+            <div class="card-actions">
+              <a href="sistemaLivros.html" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                Acessar
+              </a>
+            </div>
+          </div>
+
+          <!-- Gerenciador de Vendas -->
+          <div class="admin-card">
+            <div class="card-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Gerenciador de Vendas</h3>
+            <p>Monitore vendas, relatórios e análises</p>
+            <div class="card-actions">
+              <a href="sistemaVendas.html" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                Acessar
+              </a>
+            </div>
+          </div>
+
+          <!-- Controle de Estoque -->
+          <div class="admin-card">
+            <div class="card-icon">
+              <i class="fas fa-boxes"></i>
+            </div>
+            <h3>Controle de Estoque</h3>
+            <p>Gerencie entrada e saída de produtos</p>
+            <div class="card-actions">
+              <a href="controleEstoque.html" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                Acessar
+              </a>
+            </div>
+          </div>
+
+          <!-- Sistema de IA -->
+          <div class="admin-card">
+            <div class="card-icon">
+              <i class="fas fa-robot"></i>
+            </div>
+            <h3>Sistema de IA</h3>
+            <p>Recomendações inteligentes e análises</p>
+            <div class="card-actions">
+              <a href="sistemaIA.html" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                Acessar
+              </a>
+            </div>
+          </div>
+
+          <!-- Gestão de Clientes -->
+          <div class="admin-card">
+            <div class="card-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h3>Gestão de Clientes</h3>
+            <p>Cadastro, edição e controle de clientes</p>
+            <div class="card-actions">
+              <a href="listarClientes.html" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                Acessar
+              </a>
+            </div>
+          </div>
+
+          <!-- Análise de Vendas -->
+          <div class="admin-card">
+            <div class="card-icon">
+              <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3>Análise de Vendas</h3>
+            <p>Relatórios detalhados e métricas de performance</p>
+            <div class="card-actions">
+              <a href="analiseHistoricoVendas.html" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                Acessar
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estatísticas Rápidas -->
+        <div class="admin-stats">
+          <h3>
+            <i class="fas fa-chart-pie"></i>
+            Estatísticas Rápidas
+          </h3>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stat-info">
+                <h4>Total de Clientes</h4>
+                <p id="total-clients">-</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-book"></i>
+              </div>
+              <div class="stat-info">
+                <h4>Livros Cadastrados</h4>
+                <p id="total-books">-</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+              </div>
+              <div class="stat-info">
+                <h4>Pedidos Hoje</h4>
+                <p id="orders-today">-</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="stat-info">
+                <h4>Vendas Hoje</h4>
+                <p id="sales-today">-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
